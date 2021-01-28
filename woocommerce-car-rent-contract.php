@@ -12,5 +12,6 @@ require_once plugin_dir_path(__FILE__) . '/admin/listContractAdmin.php';
 require_once plugin_dir_path(__FILE__) . '/admin/detailContractAdmin.php';
 
 require_once plugin_dir_path(__FILE__) . '/admin/menu.php';
+require_once plugin_dir_path(__FILE__) . '/admin/functions.php';
 
 

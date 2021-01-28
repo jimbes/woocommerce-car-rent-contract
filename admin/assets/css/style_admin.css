@@ -1,0 +1,36 @@
+.debut,.fin{
+
+    margin: 0 1rem;
+}
+
+.block{
+    background-color: white;
+    padding: 1rem 1.5rem;
+    box-sizing: border-box;
+    margin: 1rem 0;
+    width: 100%;
+}
+
+.contract,
+.contract .block{
+    display: none;
+}
+
+.block .action{
+    padding: 1rem 0;
+
+}
+.block .action button{
+    border: none;
+    padding: 1rem 1.5rem;
+    margin: 0 1rem;
+    cursor: pointer;
+}
+.block .action .modify_block{
+    background-color: #0a4e77;
+    color: white;
+}
+.block .action .validate_block{
+    background-color: green;
+    color: white;
+}
