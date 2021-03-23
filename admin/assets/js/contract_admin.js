@@ -9,11 +9,11 @@
                     var input = "";
                     if ($(this).attr('class').split(' ')[1] == "textarea") {
                         input += "<textarea"
-                        input += " name='"+$(this).attr('class').split(' ')[0]+"'>";
+                        input += " name='" + $(this).attr('class').split(' ')[0] + "'>";
                     } else {
                         input += "<input ";
-                        input += " name='"+$(this).attr('class').split(' ')[0]+"'";
-                        input += " type='"+$(this).attr('class').split(' ')[1]+"'";
+                        input += " name='" + $(this).attr('class').split(' ')[0] + "'";
+                        input += " type='" + $(this).attr('class').split(' ')[1] + "'";
                         input += " value ='";
                     }
 
@@ -21,7 +21,7 @@
                     if ($(this).attr('class').split(' ')[1] == "date") {
                         var dateFRarray = $(element).children('td').eq(1).text().split('/');
                         var date = dateFRarray[2] + "-" + dateFRarray[1] + "-" + dateFRarray[0];
-                        input +=  date;
+                        input += date;
                     } else if ($(this).attr('class').split(' ')[1] == "datetime-local") {
                         var splitSpace = $(element).children('td').eq(1).text().split(' ');
                         var dateFRarray = splitSpace[0].split('/');
@@ -32,8 +32,8 @@
                     }
                     if ($(this).attr('class').split(' ')[1] == "textarea") {
                         input += "</textarea>";
-                    }else{
-                    input += "' />";
+                    } else {
+                        input += "' />";
                     }
                 }
 
@@ -63,9 +63,29 @@
             });
         }
     });
-$("#save").on("click",function (){
-    var element = document.getElementById('contract');
-    html2pdf(element);
-})
-
 })(jQuery);
+
+function callSubmit(url,idContainer){
+    var $form = jQuery('<form>', {
+        action: url,
+        method: 'post'
+    });
+    jQuery('<input>').attr({
+        type: "hidden",
+        name: 'action',
+        value: 'addContract'
+    }).appendTo($form);
+    jQuery.each(jQuery("#"+idContainer).find("input[type=hidden]"), function(key, val) {
+        jQuery('<input>').attr({
+            type: "hidden",
+            name: jQuery(val).attr("name"),
+            value: jQuery(val).val()
+        }).appendTo($form);
+    });
+    $form.appendTo('body').submit();
+}
+
+function myCallback(pdf) {
+    // Your function, using the pdf object
+    //console.log(pdf);
+}
