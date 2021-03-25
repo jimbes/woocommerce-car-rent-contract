@@ -54,6 +54,8 @@ class Contract {
 	private $dateFinal;
 	private $carBroken;
 
+	private $comment;
+
 	//
 	private $urlContractPDF;
 
@@ -76,8 +78,10 @@ class Contract {
 	}
 
 	public function updateContract(){
+
+
 		global $wpdb;
-		$result = $wpdb->update($wpdb->prefix, [
+		$result = $wpdb->update($wpdb->prefix . 'wcc_contracts', [
 			'fkOrder'       => $this->getFkIdCommande(),
 			'fkUser'        => $this->getFkIdUser(),
 			'createDate'    => $this->getCreateDate(),
@@ -141,33 +145,35 @@ class Contract {
 		return get_object_vars ($this);
 	}
 	public function setArrayToThis($array){
-		$this->setLname($array['lName']);
-		$this->setFname($array['fName']);
-		$this->setDob($array['dob']);
-		$this->setDriverlicense($array['nPermis']);
-		$this->setDriverdate($array['permisDate']);
-		$this->setAddress($array['adresse']);
-		$this->setProprioName($array['nomProprietaire']);
-		$this->setModel($array['model']);
-		$this->setIdCar($array['numCar']);
-		$this->setFuel($array['fuel']);
-		$this->setKilVoiture($array['kilVoiture']);
-		$this->setStartDate($array['start']);
-		$this->setEndDate($array['end']);
-		$this->setDeliveryAddress($array['delivery']);
-		$this->setKilometers($array['kilometre']);
-		$this->setLevelFuel($array['levelFuel']);
-		$this->setPrice($array['price']);
-		$this->setFront($array['face']);
-		$this->setLeft($array['left']);
-		$this->setBack($array['back']);
-		$this->setRight($array['right']);
-		$this->setInsurance($array['insurance']);
-		$this->setKmFinal($array['kmFinal']);
-		$this->setFuelFinal($array['fuelFinal']);
-		$this->setDateFinal($array['dateFinal']);
-		$this->setCarBroken($array['carBroken']);
-		$this->setUrlContractPDF($array['pdfLink']);
+		$this->setLname(strip_tags ($array['lName']));
+		$this->setFname(strip_tags ($array['fName']));
+		$this->setDob(strip_tags ($array['dob']));
+		$this->setDriverlicense(strip_tags ($array['nPermis']));
+		$this->setDriverdate(strip_tags ($array['permisDate']));
+		$this->setAddress(strip_tags ($array['adresse']));
+		$this->setProprioName(strip_tags ($array['nomProprietaire']));
+		$this->setModel(strip_tags ($array['model']));
+		$this->setIdCar(strip_tags ($array['numCar']));
+		$this->setFuel(strip_tags ($array['fuel']));
+		$this->setKilVoiture(strip_tags ($array['kilVoiture']));
+		$this->setStartDate(strip_tags ($array['start']));
+		$this->setEndDate(strip_tags ($array['end']));
+		$this->setDeliveryAddress(strip_tags ($array['delivery']));
+		$this->setKilometers(strip_tags ($array['kilometre']));
+		$this->setLevelFuel(strip_tags ($array['levelFuel']));
+		$this->setPrice(strip_tags ($array['price']));
+		$this->setFront(strip_tags ($array['face']));
+		$this->setLeft(strip_tags ($array['left']));
+		$this->setBack(strip_tags ($array['back']));
+		$this->setRight(strip_tags ($array['right']));
+		$this->setInsurance(strip_tags ($array['insurance']));
+		$this->setKmFinal(strip_tags ($array['kmFinal']));
+		$this->setFuelFinal(strip_tags ($array['fuelFinal']));
+		$this->setDateFinal(strip_tags ($array['dateFinal']));
+		$this->setCarBroken(strip_tags ($array['carBroken']));
+		$this->setComment(strip_tags ($array['comment']));
+		$this->setUrlContractPDF(strip_tags ($array['pdfLink']));
+		$this->setStatus(strip_tags ($array['status']));
 	}
 
 
@@ -199,7 +205,9 @@ class Contract {
 			"kmFinal"           => $this->getKmFinal(),
 			"fuelFinal"         => $this->getFuelFinal(),
 			"dateFinal"         => $this->getDateFinal(),
-			"carBroken"         => $this->getCarBroken()
+			"carBroken"         => $this->getCarBroken(),
+			"comment"           => $this->getComment(),
+			"status"            => $this->getStatus()
 		);
 		return json_encode($array);
 	}
@@ -226,13 +234,13 @@ class Contract {
 			'price'         => $this->getPrice(),
 			'insurance'     => $this->getInsurance(),
 			'kmFinal'       => $this->getKmFinal(),
-			'distance'      => '',
-			'fuelFinal'     => '',
-			'dateFinal'     => '',
-			'comments'      => '',
+			'distance'      => $this->getDistance(),
+			'fuelFinal'     => $this->getFuelFinal(),
+			'dateFinal'     => $this->getDateFinal(),
+			'comments'      => $this->getComment(),
 			'cgv'           => true,
-			'brokenYes'     => false,
-			'brokenNo'      => false,
+			'brokenYes'     => $this->getCarBroken() == 1,
+			'brokenNo'      => $this->getCarBroken() == 0,
 		);
 		/*if($this->getCarBroken()){
 			array_push($fields, array("brokenYes" => true));
@@ -766,6 +774,17 @@ class Contract {
 		return $this->carBroken;
 	}
 
+	public function getCarBrokenText() {
+		if(isset($this->carBroken) && !empty($this->carBroken)){
+			if($this->carBroken == 1){
+				return "Oui";
+			}else{
+				return "Non";
+			}
+		}
+		return "";
+	}
+
 	/**
 	 * @param mixed $carBroken
 	 */
@@ -773,6 +792,27 @@ class Contract {
 		$this->carBroken = $carBroken;
 	}
 
+	/**
+	 * @return mixed
+	 */
+	public function getComment() {
+		return $this->comment;
+	}
+
+	/**
+	 * @param mixed $comment
+	 */
+	public function setComment( $comment ): void {
+		$this->comment = $comment;
+	}
+
+
+
+	public function getDistance(){
+		$result = intval($this->getKmFinal()) - intval($this->getKilVoiture());
+		if($result > 0) return $result;
+		return "";
+	}
 
 
 

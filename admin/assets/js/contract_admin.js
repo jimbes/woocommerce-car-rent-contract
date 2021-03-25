@@ -27,12 +27,20 @@
                         var dateFRarray = splitSpace[0].split('/');
                         var dateheure = dateFRarray[2] + "-" + dateFRarray[1] + "-" + dateFRarray[0] + "T" + splitSpace[2];
                         input += dateheure;
-                    } else {
+                    } else if ($(this).attr('class').split(' ')[1] == "checkbox") {
+                        input += 1;
+                    }else{
                         input += $(element).children('td').eq(1).text();
                     }
                     if ($(this).attr('class').split(' ')[1] == "textarea") {
                         input += "</textarea>";
-                    } else {
+                    }  else if ($(this).attr('class').split(' ')[1] == "checkbox") {
+                        if( $(element).children('td').eq(1).text() === "Oui"){
+                            input += "' checked />";
+                        }else {
+                            input += "' />";
+                        }
+                    }else {
                         input += "' />";
                     }
                 }
@@ -52,13 +60,25 @@
                     var datearray = $(element).children('td').eq(1).find("input").val().split("-");
                     var dateFR = datearray[2] + "/" + datearray[1] + "/" + datearray[0];
                     $(element).children('td').eq(1).html(dateFR);
+                    $(element).children('td').eq(2).find("input").val(dateFR)
                 } else if ($(this).attr('class').split(' ')[1] == "datetime-local") {
                     var splitSpace = $(element).children('td').eq(1).find("input").val().split('T');
                     var dateFRarray = splitSpace[0].split('-');
                     var dateheure = dateFRarray[2] + "/" + dateFRarray[1] + "/" + dateFRarray[0] + " à " + splitSpace[1];
                     $(element).children('td').eq(1).html(dateheure);
+                    $(element).children('td').eq(2).find("input").val(dateheure)
+                } if ($(this).attr('class').split(' ')[1] == "checkbox") {
+                    if($(element).children('td').eq(1).find("input").is(':checked')){
+                        $(element).children('td').eq(1).html("Oui");
+                        $(element).children('td').eq(2).find("input").val(1);
+                    }else{
+                        $(element).children('td').eq(1).html("Non");
+                        $(element).children('td').eq(2).find("input").val(0)
+                    }
                 } else {
-                    $(element).children('td').eq(1).html($(element).children('td').eq(1).find("input,textarea").val());
+                    var val = $(element).children('td').eq(1).find("input,textarea").val();
+                    $(element).children('td').eq(1).html(val);
+                    $(element).children('td').eq(2).find("input").val(val)
                 }
             });
         }

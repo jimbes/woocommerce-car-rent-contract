@@ -13,12 +13,12 @@ function detailContractAdminFunction() {
 	$forfait_km     = "";
 	$assurance      = "";
 	foreach ( $order->get_items() as $item ) {
-		$car                = new WC_Product( intval( $item->get_data()["product_id"] ) );
-		$rent_startDate     = $item->get_meta( 'Date', true );;
-		$rent_endDate       = $item->get_meta( 'Date de retour', true );
-		$rent_delivery      = $item->get_meta( 'Point de retour', true );
-		$forfait_km         = $item->get_meta( 'Forfait kilométrique', true );
-		$assurance          = $item->get_meta( 'Assurances', true );
+		$car            = new WC_Product( intval( $item->get_data()["product_id"] ) );
+		$rent_startDate = strip_tags ( $item->get_meta( 'Date', true ));;
+		$rent_endDate  = strip_tags ( $item->get_meta( 'Date de retour', true ));
+		$rent_delivery = strip_tags ( $item->get_meta( 'Point de retour', true ));
+		$forfait_km    = strip_tags ( $item->get_meta( 'Forfait kilométrique', true ));
+		$assurance     = strip_tags ( $item->get_meta( 'Assurances', true ));
 		//var_dump($item->get_meta_data());
 	}
 
@@ -49,7 +49,7 @@ function detailContractAdminFunction() {
 			"delivery"        => $rent_delivery,
 			"kilometre"       => $forfait_km,
 			"levelFuel"       => "",
-			"price"           => $order->get_formatted_order_total(),
+			"price"           => strip_tags ( $order->get_formatted_order_total()),
 			"insurance"       => $assurance,
 			"kilVoiture"      => get_field( 'kilometrage_reel', 'post_' . $car->get_id() ),
 			"face"            => "",
@@ -59,7 +59,6 @@ function detailContractAdminFunction() {
 		);
 		$contract->setArrayToThis( $array );
 	} else {
-		$contract->setStatus( 2 );
 		$contract->setUpdate( $today->format( 'Y-m-d H:i:s' ) );
 	}
 
@@ -75,6 +74,7 @@ function detailContractAdminFunction() {
     <div id="contract">
         <input type="hidden" name="fkOrder" value="<?php echo $contract->getFkIdCommande() ?>"/>
         <input type="hidden" name="fkUser" value="<?php echo $contract->getFkIdUser() ?>"/>
+        <input type="hidden" name="carID" value="<?php echo $car->get_id() ?>"/>
 
         <input type="hidden" name="createDate" value="<?php echo $contract->getCreateDate() ?>"/>
         <input type="hidden" name="updateDate" value="<?php echo $contract->getUpdate() ?>"/>
@@ -86,7 +86,7 @@ function detailContractAdminFunction() {
             <input type="hidden" name="idContract" value="<?php echo $contract->getId() ?>"/>
 		<?php } ?>
 
-        <div class="debut <?php if ( $contract->getStatus() > 1 )
+        <div class="debut <?php if ( $contract->getStatus() == 2 )
 			echo 'hidden' ?>">
             <h2>Demande de la location</h2>
             <div class="locataire block">
@@ -125,7 +125,7 @@ function detailContractAdminFunction() {
                         <td><input type="hidden" name="adresse" value="<?php echo $contract->getAddress() ?>"/></td>
                     </tr>
                 </table>
-                <div class="action">
+                <div class="action <?php if ( $contract->getStatus() == 3 ) echo 'hidden' ?>">
                     <button class="modify_block">Modifier</button>
                 </div>
             </div>
@@ -139,7 +139,7 @@ function detailContractAdminFunction() {
                                    value="<?php echo $contract->getProprioName() ?>"/></td>
                     </tr>
                 </table>
-                <div class="action">
+                <div class="action <?php if ( $contract->getStatus() == 3 ) echo 'hidden' ?>">
                     <button class="modify_block">Modifier</button>
                 </div>
             </div>
@@ -166,10 +166,11 @@ function detailContractAdminFunction() {
                     <tr class="fuel text">
                         <td>Kilométrage de la voiture actuellement</td>
                         <td><?php echo $contract->getKilVoiture() ?></td>
-                        <td><input type="hidden" name="kilVoiture" value="<?php echo $contract->getKilVoiture() ?>"/></td>
+                        <td><input type="hidden" name="kilVoiture" value="<?php echo $contract->getKilVoiture() ?>"/>
+                        </td>
                     </tr>
                 </table>
-                <div class="action">
+                <div class="action <?php if ( $contract->getStatus() == 3 ) echo 'hidden' ?>">
                     <button class="modify_block">Modifier</button>
                 </div>
             </div>
@@ -209,7 +210,7 @@ function detailContractAdminFunction() {
                         <td><input type="hidden" name="price" value="<?php echo $contract->getPrice() ?>"/></td>
                     </tr>
                 </table>
-                <div class="action">
+                <div class="action <?php if ( $contract->getStatus() == 3 ) echo 'hidden' ?>">
                     <button class="modify_block">Modifier</button>
                 </div>
             </div>
@@ -222,7 +223,7 @@ function detailContractAdminFunction() {
                         <td><input type="hidden" name="insurance" value="<?php echo $contract->getInsurance() ?>"/></td>
                     </tr>
                 </table>
-                <div class="action">
+                <div class="action <?php if ( $contract->getStatus() == 3 ) echo 'hidden' ?>">
                     <button class="modify_block">Modifier</button>
                 </div>
             </div>
@@ -237,63 +238,76 @@ function detailContractAdminFunction() {
                     <tr class="left textarea">
                         <td>Gauche</td>
                         <td><?php echo $contract->getLeft() ?></td>
-                        <td><input type="hidden" name="face" value="<?php echo $contract->getLeft() ?>"/></td>
+                        <td><input type="hidden" name="left" value="<?php echo $contract->getLeft() ?>"/></td>
                     </tr>
                     <tr class="back textarea">
                         <td>Derrière</td>
                         <td><?php echo $contract->getBack() ?></td>
-                        <td><input type="hidden" name="face" value="<?php echo $contract->getBack() ?>"/></td>
+                        <td><input type="hidden" name="back" value="<?php echo $contract->getBack() ?>"/></td>
                     </tr>
                     <tr class="right textarea">
                         <td>Droite</td>
                         <td><?php echo $contract->getRight() ?></td>
-                        <td><input type="hidden" name="face" value="<?php echo $contract->getRight() ?>"/></td>
+                        <td><input type="hidden" name="right" value="<?php echo $contract->getRight() ?>"/></td>
                     </tr>
                 </table>
-                <div class="action">
+                <div class="action <?php if ( $contract->getStatus() == 3 ) echo 'hidden' ?>">
                     <button class="modify_block">Modifier</button>
                 </div>
             </div>
-            <div class="generateContract">
-                <a href="javascript:callSubmit('<?php echo admin_url( 'admin-post.php' ) ?>','contract')">Créer un
-                    contrat</a>
-            </div>
         </div>
 
-        <div class="contractPDF">
-            <p>Le lien de Contrat</p>
-			<?php if ( ! empty( $contract->getUrlContractPDF() ) ) { ?>
-                <a href="<?php echo $contract->getUrlContractPDF() ?>">Lien</a>
-			<?php } else { ?>
-                <a href="">Generer le PDF</a>
-			<?php } ?>
-        </div>
 
         <div class="fin <?php if ( $contract->getStatus() < 2 )
 			echo 'hidden' ?>">
-        <h2>Fin de la location</h2>
-        <div class="compte-rendu block">
-            <h3>Compte rendu</h3>
-            <table>
-                <tr>
-                    <td>Distance parcourue</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Niveau de carburant</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Voiture endommagée</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Restitution de la voiture</td>
-                    <td></td>
-                </tr>
-            </table>
+            <h2>Fin de la location</h2>
+            <div class="compte-rendu block">
+                <h3>Compte rendu</h3>
+                <table>
+                    <tr class="kmFinal text">
+                        <td>Relevé Km Après la restitution</td>
+                        <td><?php echo $contract->getKmFinal() ?></td>
+                        <td><input type="hidden" name="kmFinal" value="<?php echo $contract->getKmFinal() ?>"/></td>
+                    </tr>
+                    <tr class="fuelFinal text">
+                        <td>Niveau de carburant final</td>
+                        <td><?php echo $contract->getFuelFinal() ?></td>
+                        <td><input type="hidden" name="fuelFinal" value="<?php echo $contract->getFuelFinal() ?>"/></td>
+                    </tr>
+                    <tr class="carBroken checkbox">
+                        <td>La voiture est endommagé</td>
+                        <td><?php echo $contract->getCarBrokenText() ?></td>
+                        <td><input type="hidden" name="carBroken" value="<?php echo $contract->getCarBroken() ?>"/></td>
+                    </tr>
+                    <tr class="dateFinal date">
+                        <td>Date de la restitution</td>
+                        <td><?php echo $contract->getDateFinal() ?></td>
+                        <td><input type="hidden" name="dateFinal" value="<?php echo $contract->getDateFinal() ?>"/></td>
+                    </tr>
+                    <tr class="comment textarea">
+                        <td>Commentaire</td>
+                        <td><?php echo $contract->getComment() ?></td>
+                        <td><input type="hidden" name="comment" value="<?php echo $contract->getComment() ?>"/></td>
+                    </tr>
+                </table>
+                <div class="action <?php if ( $contract->getStatus() == 3 ) echo 'hidden' ?>">
+                    <button class="modify_block">Modifier</button>
+                </div>
+            </div>
         </div>
-    </div>
+
+
+        <div class="contractPDF">
+		    <?php if ( ! empty( $contract->getUrlContractPDF() ) ) { ?>
+                <a href="<?php echo $contract->getUrlContractPDF() ?>">Ouvrir le PDF</a>
+                <?php if ($contract->getStatus() != 3 ){ ?>
+                    <a href="javascript:callSubmit('<?php echo admin_url( 'admin-post.php' ) ?>','contract')">Clore le contrat et générer le PDF</a>
+               <?php } ?>
+		    <?php } else { ?>
+                <a href="javascript:callSubmit('<?php echo admin_url( 'admin-post.php' ) ?>','contract')">Generer le PDF</a>
+		    <?php } ?>
+        </div>
+
     </div>
 
 	<?php
