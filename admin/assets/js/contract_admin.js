@@ -86,10 +86,7 @@
 })(jQuery);
 
 function callSubmit(url,idContainer){
-    var $form = jQuery('<form>', {
-        action: url,
-        method: 'post'
-    });
+    var $form = jQuery('<form action="'+url+'" method="POST" enctype="multipart/form-data"></form>');
     jQuery('<input>').attr({
         type: "hidden",
         name: 'action',
@@ -101,6 +98,9 @@ function callSubmit(url,idContainer){
             name: jQuery(val).attr("name"),
             value: jQuery(val).val()
         }).appendTo($form);
+    });
+    jQuery.each(jQuery(".photoElem"), function(key, val) {
+        jQuery(val).appendTo($form);
     });
     $form.appendTo('body').submit();
 }

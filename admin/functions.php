@@ -17,7 +17,10 @@ function addContract(){
 	$contract->setCreateDate($_POST["createDate"]);
 	$contract->setUpdate($_POST["updateDate"]);
 	$contract->setStatus($_POST["status"]);
+
+
 	$contract->setArrayToThis($_POST);
+
 	if($contract->getStatus() < 2) {
 		$contract->generatePDF();
 		$contract->setStatus(2);
@@ -28,6 +31,23 @@ function addContract(){
 		$contract->setStatus(3);
 		$contract->updateContract();
 		update_field( 'kilometrage_reel',  intval($contract->getKmFinal()) , 'post_'.$_POST["carID"]);
+	}
+
+	if(isset($_FILES) && !empty($_FILES)){
+		foreach ($_FILES as $row => $file){
+			if($file["error"] == 0) {
+				$today = new DateTime();
+				$image = new ContractImages();
+				$image->setFkContracts( $contract->getId() );
+				$image->setTypeImage(substr($row,-1,1));
+				$image->setTitleImage($_POST["title-photo-".$image->getTypeImage()]);
+				$image->setDescription("");
+				$image->setImageValidation(1);
+				$image->setCreateDate($today->format( 'Y-m-d H:i:s' ));
+				$image->setUpdateDate($today->format( 'Y-m-d H:i:s' ));
+				$image->uploadAndAdd($file,$contract->getFkIdCommande());
+			}
+		}
 	}
 	wp_redirect( admin_url( 'admin.php?page=car_rent_contract_detail&orderID='.$contract->getFkIdCommande() ) );
 }

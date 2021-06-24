@@ -39,16 +39,6 @@ class Contract {
 	// Option
 	private $insurance;
 
-	// Checkup
-	private $front;
-	private $imgFront;
-	private $left;
-	private $imgLeft;
-	private $back;
-	private $imgBack;
-	private $right;
-	private $imgRight;
-
 	private $kmFinal;
 	private $fuelFinal;
 	private $dateFinal;
@@ -75,6 +65,7 @@ class Contract {
 			'updateDate'    => $this->getUpdate(),
 			'data'          => $this->getThisToJson()
 		]);
+		$this->setId($wpdb->insert_id);
 	}
 
 	public function updateContract(){
@@ -162,10 +153,6 @@ class Contract {
 		$this->setKilometers(strip_tags ($array['kilometre']));
 		$this->setLevelFuel(strip_tags ($array['levelFuel']));
 		$this->setPrice(strip_tags ($array['price']));
-		$this->setFront(strip_tags ($array['face']));
-		$this->setLeft(strip_tags ($array['left']));
-		$this->setBack(strip_tags ($array['back']));
-		$this->setRight(strip_tags ($array['right']));
 		$this->setInsurance(strip_tags ($array['insurance']));
 		$this->setKmFinal(strip_tags ($array['kmFinal']));
 		$this->setFuelFinal(strip_tags ($array['fuelFinal']));
@@ -197,10 +184,6 @@ class Contract {
 			"levelFuel"         => $this->getLevelFuel(),
 			"price"             => $this->getPrice(),
 			"insurance"         => $this->getInsurance(),
-			"face"              => $this->getFront(),
-			"left"              => $this->getLeft(),
-			"back"              => $this->getBack(),
-			"right"             => $this->getRight(),
 			"pdfLink"           => $this->getUrlContractPDF(),
 			"kmFinal"           => $this->getKmFinal(),
 			"fuelFinal"         => $this->getFuelFinal(),
@@ -218,6 +201,7 @@ class Contract {
 	public function generatePDF(){
 
 		$fields = array(
+			'numContract'   => $this->getFkIdCommande(),
 			'nPermis'       => $this->getDriverlicense(),
 			'permisDate'    => $this->getDriverdate(),
 			'fullname'      => $this->getFname()." ".$this->getLname(),
@@ -238,16 +222,15 @@ class Contract {
 			'fuelFinal'     => $this->getFuelFinal(),
 			'dateFinal'     => $this->getDateFinal(),
 			'comments'      => $this->getComment(),
-			'cgv'           => true,
-			'brokenYes'     => $this->getCarBroken() == 1,
-			'brokenNo'      => $this->getCarBroken() == 0,
+			'broken'     => $this->getCarBrokenText()
 		);
 		/*if($this->getCarBroken()){
 			array_push($fields, array("brokenYes" => true));
 		}else{
 			array_push($fields, array("brokenYes" => false));
 		}*/
-		$pdf = new FPDM(dirname(__FILE__).'/template/Contract-de-Location-Formulaire-repair.pdf');
+		//$pdf = new FPDM(dirname(__FILE__).'/template/Contract-de-Location-Formulaire-repair.pdf');
+		$pdf = new FPDM(dirname(__FILE__).'/template/Contract-de-Location-Formulaire-V2-repair.pdf');
 		$pdf->useCheckboxParser = true; // Checkbox parsing is ignored (default FPDM behaviour) unless enabled with this setting
 		$pdf->Load($fields, true);
 		$pdf->Merge();
@@ -569,118 +552,6 @@ class Contract {
 	 */
 	public function setInsurance( $insurance ): void {
 		$this->insurance = $insurance;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getFront() {
-		return $this->front;
-	}
-
-	/**
-	 * @param mixed $front
-	 */
-	public function setFront( $front ): void {
-		$this->front = $front;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getImgFront() {
-		return $this->imgFront;
-	}
-
-	/**
-	 * @param mixed $imgFront
-	 */
-	public function setImgFront( $imgFront ): void {
-		$this->imgFront = $imgFront;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getLeft() {
-		return $this->left;
-	}
-
-	/**
-	 * @param mixed $left
-	 */
-	public function setLeft( $left ): void {
-		$this->left = $left;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getImgLeft() {
-		return $this->imgLeft;
-	}
-
-	/**
-	 * @param mixed $imgLeft
-	 */
-	public function setImgLeft( $imgLeft ): void {
-		$this->imgLeft = $imgLeft;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getBack() {
-		return $this->back;
-	}
-
-	/**
-	 * @param mixed $back
-	 */
-	public function setBack( $back ): void {
-		$this->back = $back;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getImgBack() {
-		return $this->imgBack;
-	}
-
-	/**
-	 * @param mixed $imgBack
-	 */
-	public function setImgBack( $imgBack ): void {
-		$this->imgBack = $imgBack;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getRight() {
-		return $this->right;
-	}
-
-	/**
-	 * @param mixed $right
-	 */
-	public function setRight( $right ): void {
-		$this->right = $right;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getImgRight() {
-		return $this->imgRight;
-	}
-
-	/**
-	 * @param mixed $imgRight
-	 */
-	public function setImgRight( $imgRight ): void {
-		$this->imgRight = $imgRight;
 	}
 
 	/**
