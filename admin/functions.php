@@ -21,6 +21,9 @@ function addContract(){
 
 	$contract->setArrayToThis($_POST);
 
+
+	$contract->generatePDF();
+	/*
 	if($contract->getStatus() < 2) {
 		$contract->generatePDF();
 		$contract->setStatus(2);
@@ -50,6 +53,7 @@ function addContract(){
 		}
 	}
 	wp_redirect( admin_url( 'admin.php?page=car_rent_contract_detail&orderID='.$contract->getFkIdCommande() ) );
+	*/
 }
 
 add_action('admin_post_updateContract', 'updateContract' );

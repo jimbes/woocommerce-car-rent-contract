@@ -1,6 +1,13 @@
 <?php
 
 require('pdf/FPDM.php');
+require('pdf/fpdf.php');
+
+use setasign\Fpdi\Fpdi;
+use setasign\Fpdi\PdfReader;
+
+require('pdf/FPDI/autoload.php');
+
 class Contract {
 
 	private $id;
@@ -224,26 +231,90 @@ class Contract {
 			'comments'      => $this->getComment(),
 			'broken'     => $this->getCarBrokenText()
 		);
-		/*if($this->getCarBroken()){
-			array_push($fields, array("brokenYes" => true));
-		}else{
-			array_push($fields, array("brokenYes" => false));
-		}*/
-		//$pdf = new FPDM(dirname(__FILE__).'/template/Contract-de-Location-Formulaire-repair.pdf');
-		$pdf = new FPDM(dirname(__FILE__).'/template/Contract-de-Location-Formulaire-V2-repair.pdf');
-		$pdf->useCheckboxParser = true; // Checkbox parsing is ignored (default FPDM behaviour) unless enabled with this setting
-		$pdf->Load($fields, true);
-		$pdf->Merge();
+
+
+		$pdfInit = new FPDM(dirname(__FILE__).'/template/Contract-de-Location-Formulaire-V2-repair.pdf');
+		$pdfInit->useCheckboxParser = true; // Checkbox parsing is ignored (default FPDM behaviour) unless enabled with this setting
+		$pdfInit->Load($fields, true);
+		$pdfInit->Merge();
 		//$pdf->SetFontSize(40);
 		$pathToContract = dirname(dirname(__FILE__))."/contracts";
 		$UrlToContract = plugin_dir_url(dirname(__FILE__))."contracts";
 		$nameFile = "contract de loction n°".$this->getFkIdCommande().".pdf";
-		$file = $pdf->Output('', "S");
 
-		$handle = fopen($pathToContract."/".$nameFile, 'w') or die('Cannot open file:  '.$nameFile); //implicitly creates file
-		fwrite($handle,$file);
+		$pdfContract = $pdfInit->Output('', "S");
+
+		$dirname = $pathToContract."/".$this->getFkIdCommande()."/";
+		if (!is_dir($dirname))
+		{
+			mkdir($dirname, 0755, true);
+		}
+		$handle = fopen($dirname.$nameFile, 'w') or die('Cannot open file:  '.$nameFile); //implicitly creates file
+		fwrite($handle,$pdfContract);
 		fclose($handle);
 		$this->setUrlContractPDF($UrlToContract."/".$nameFile);
+		$pdfContractLink = dirname(dirname(__FILE__))."/contracts/".$this->getFkIdCommande()."/".$nameFile;
+
+
+		$pdfPhoto = new Fpdi();
+		$pdfPhoto->AddPage();
+
+		$pagecount = $pdfPhoto->setSourceFile(dirname(__FILE__).'/template/Contract-de-Location-Photos-Avant.pdf');
+		$tppl = $pdfPhoto->importPage(1);
+		$pdfPhoto->useTemplate($tppl, 0, 0, 210);
+
+		$pdfPhoto->Image(dirname(dirname(__FILE__))."/contracts/images/Contract 3904 - 1403 - Entrepot Bri - PF3.jpg",5,60,90,70);
+		$pdfPhoto->Image(dirname(dirname(__FILE__))."/contracts/images/Contract 3904 - 1403 - Entrepot Bri - PF3.jpg",115,60,90,70);
+		$pdfPhoto->Image(dirname(dirname(__FILE__))."/contracts/images/Contract 3904 - 1403 - Entrepot Bri - PF3.jpg",5,150,90,70);
+		$pdfPhoto->Image(dirname(dirname(__FILE__))."/contracts/images/Contract 3904 - 1403 - Entrepot Bri - PF3.jpg",115,150,90,70);
+		$pdfPhoto->Image(dirname(dirname(__FILE__))."/contracts/images/Contract 3904 - 1403 - Entrepot Bri - PF3.jpg",5,240,90,70);
+		$pdfPhoto->Image(dirname(dirname(__FILE__))."/contracts/images/Contract 3904 - 1403 - Entrepot Bri - PF3.jpg",115,240,90,70);
+
+		$pdfPhoto->AddPage();
+		$tppl = $pdfPhoto->importPage(1);
+		$pdfPhoto->useTemplate($tppl, 0, 0, 210);
+
+		$pdfPhoto->Image(dirname(dirname(__FILE__))."/contracts/images/Contract 3904 - 1403 - Entrepot Bri - PF3.jpg",5,60,90,70);
+		$pdfPhoto->Image(dirname(dirname(__FILE__))."/contracts/images/Contract 3904 - 1403 - Entrepot Bri - PF3.jpg",115,60,90,70);
+
+		$pdfPhotoAvant = $pdfPhoto->Output('','S');
+		$handle = fopen($pathToContract."/".$this->getFkIdCommande()."/PhotoAvant-".$nameFile, 'w') or die('Cannot open file:  '.$nameFile); //implicitly creates file
+		fwrite($handle,$pdfPhotoAvant);
+		fclose($handle);
+		$pdfPhotoAvantLink = dirname(dirname(__FILE__))."/contracts/".$this->getFkIdCommande()."/PhotoAvant-".$nameFile;
+
+		$fp_pdf = fopen($pdfContractLink, 'rb');
+
+		$img = new Imagick(); // [0] can be used to set page number
+		$img->setResolution(300,300);
+		$img->readImageFile($fp_pdf);
+		$img->setImageFormat( "jpg" );
+		$img->setImageCompression(imagick::COMPRESSION_JPEG);
+		$img->setImageCompressionQuality(90);
+
+		$img->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+
+		$data = $img->getImageBlob();
+		echo "<img src='".$data."'/>";
+		/*
+				$pdfFinal = new Fpdi();
+				$pdfFinal->setSourceFile($pdfContractLink);
+				$tppl = $pdfFinal->importPage(1,PdfReader\PageBoundaries::MEDIA_BOX);
+				$pdfFinal->AddPage();
+				$pdfFinal->useImportedPage($tppl, 0, 0, 210);
+
+				$pdfFinal->AddPage();
+				$pdfFinal->setSourceFile($pdfPhotoAvantLink);
+				$tppl = $pdfFinal->importPage(1);
+				$pdfFinal->useTemplate($tppl, 0, 0, 210);
+
+				$pdfFinal->AddPage();
+				$pdfFinal->setSourceFile($pdfPhotoAvantLink);
+				$tppl = $pdfFinal->importPage(2);
+				$pdfFinal->useTemplate($tppl, 0, 0, 210);
+
+				$pdfFinal->Output();
+		*/
 	}
 
 	/**
