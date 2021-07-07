@@ -233,14 +233,88 @@ class Contract {
 		);
 
 
+		/*
 		$pdfInit = new FPDM(dirname(__FILE__).'/template/Contract-de-Location-Formulaire-V2-repair.pdf');
 		$pdfInit->useCheckboxParser = true; // Checkbox parsing is ignored (default FPDM behaviour) unless enabled with this setting
 		$pdfInit->Load($fields, true);
 		$pdfInit->Merge();
-		//$pdf->SetFontSize(40);
+		*/
+
+		$pdfInit = new Fpdi();
+		$pdfInit->AddFont('roboto','','roboto.php');
+		$pdfInit->AddPage();
+		$pdfInit->setSourceFile(dirname(__FILE__).'/template/Contract-de-Location-Page1.pdf');
+		$tppl = $pdfInit->importPage(1);
+		$pdfInit->useTemplate($tppl, 0, 0, 210);
+
+
+		$pdfInit->SetFont('roboto','',18);
+		$pdfInit->SetXY(145, 45);
+		$pdfInit->SetTextColor(255,255,255);
+		$pdfInit->Write(0, $this->getFkIdCommande());
+
+		$pdfInit->SetFont('roboto','',13);
+		$pdfInit->SetTextColor(102,102,102);
+
+		$pdfInit->SetXY(45, 74.5);
+		$pdfInit->Write(0, utf8_decode($this->getDriverlicense()));
+		$pdfInit->SetXY(51, 82.5);
+		$pdfInit->Write(0, utf8_decode($this->getDriverdate()));
+		$pdfInit->SetXY(124, 74.5);
+		$pdfInit->Write(0, utf8_decode($this->getFname()." ".$this->getLname()));
+		$pdfInit->SetXY(152, 82.5);
+		$pdfInit->Write(0, $this->getDob());
+		$pdfInit->SetXY(36, 90.5);
+		$pdfInit->Write(0, utf8_decode($this->getAddress()));
+
+
+		$pdfInit->SetXY(130, 109);
+		$pdfInit->Write(0, utf8_decode($this->getModel()));
+		$pdfInit->SetXY(60, 116.5);
+		$pdfInit->Write(0, $this->getIdCar());
+		$pdfInit->SetXY(135, 116.5);
+		$pdfInit->Write(0, $this->getFuel());
+
+
+		$pdfInit->SetXY(35, 143);
+		$pdfInit->Write(0, utf8_decode($this->getStartDate()));
+		$pdfInit->SetXY(28, 151);
+		$pdfInit->Write(0, utf8_decode($this->getEndDate()));
+		$pdfInit->SetXY(50, 159);
+		$pdfInit->Write(0, utf8_decode($this->getDeliveryAddress()));
+		$pdfInit->SetXY(148, 143);
+		$pdfInit->Write(0, utf8_decode($this->getKilometers()));
+		$pdfInit->SetXY(155, 151);
+		$pdfInit->Write(0, $this->getLevelFuel());
+		$pdfInit->SetXY(151, 159);
+		$pdfInit->Write(0,utf8_decode($this->getPrice()));
+
+
+		$pdfInit->SetXY(38, 178.5);
+		$pdfInit->Write(0,utf8_decode($this->getInsurance()));
+
+
+		$pdfInit->SetXY(57, 197.5);
+		$pdfInit->Write(0,utf8_decode($this->getKmFinal()));
+		$pdfInit->SetXY(59, 205.5);
+		$pdfInit->Write(0,utf8_decode($this->getDistance()));
+		$pdfInit->SetXY(61, 213);
+		$pdfInit->Write(0,utf8_decode($this->getFuelFinal()));
+		$pdfInit->SetXY(136, 197.5);
+		$pdfInit->Write(0,utf8_decode($this->getDateFinal()));
+		$pdfInit->SetXY(153, 205.5);
+		$pdfInit->Write(0,utf8_decode($this->getCarBrokenText()));
+
+
+		$pdfInit->SetXY(18, 227);
+		$pdfInit->Write(0,utf8_decode($this->getComment()));
+
+
 		$pathToContract = dirname(dirname(__FILE__))."/contracts";
 		$UrlToContract = plugin_dir_url(dirname(__FILE__))."contracts";
-		$nameFile = "contract de loction n°".$this->getFkIdCommande().".pdf";
+		$namePage1 = "Page1-contract de loction n°".$this->getFkIdCommande().".pdf";
+		$namePagePhoto = "PhotoAvant-contract de loction n°".$this->getFkIdCommande().".pdf";
+		$nameContract = "contract de loction n°".$this->getFkIdCommande().".pdf";
 
 		$pdfContract = $pdfInit->Output('', "S");
 
@@ -249,72 +323,88 @@ class Contract {
 		{
 			mkdir($dirname, 0755, true);
 		}
-		$handle = fopen($dirname.$nameFile, 'w') or die('Cannot open file:  '.$nameFile); //implicitly creates file
+		$handle = fopen($dirname.$namePage1, 'w') or die('Cannot open file:  '.$namePage1); //implicitly creates file
 		fwrite($handle,$pdfContract);
 		fclose($handle);
-		$this->setUrlContractPDF($UrlToContract."/".$nameFile);
-		$pdfContractLink = dirname(dirname(__FILE__))."/contracts/".$this->getFkIdCommande()."/".$nameFile;
+
+		$pdfContractPage1Link = dirname(dirname(__FILE__))."/contracts/".$this->getFkIdCommande()."/".$namePage1;
 
 
 		$pdfPhoto = new Fpdi();
 		$pdfPhoto->AddPage();
+		$pdfPhoto->setSourceFile(dirname(__FILE__).'/template/Contract-de-Location-Photos-Avant.pdf');
 
 		$pagecount = $pdfPhoto->setSourceFile(dirname(__FILE__).'/template/Contract-de-Location-Photos-Avant.pdf');
 		$tppl = $pdfPhoto->importPage(1);
 		$pdfPhoto->useTemplate($tppl, 0, 0, 210);
 
-		$pdfPhoto->Image(dirname(dirname(__FILE__))."/contracts/images/Contract 3904 - 1403 - Entrepot Bri - PF3.jpg",5,60,90,70);
-		$pdfPhoto->Image(dirname(dirname(__FILE__))."/contracts/images/Contract 3904 - 1403 - Entrepot Bri - PF3.jpg",115,60,90,70);
-		$pdfPhoto->Image(dirname(dirname(__FILE__))."/contracts/images/Contract 3904 - 1403 - Entrepot Bri - PF3.jpg",5,150,90,70);
-		$pdfPhoto->Image(dirname(dirname(__FILE__))."/contracts/images/Contract 3904 - 1403 - Entrepot Bri - PF3.jpg",115,150,90,70);
-		$pdfPhoto->Image(dirname(dirname(__FILE__))."/contracts/images/Contract 3904 - 1403 - Entrepot Bri - PF3.jpg",5,240,90,70);
-		$pdfPhoto->Image(dirname(dirname(__FILE__))."/contracts/images/Contract 3904 - 1403 - Entrepot Bri - PF3.jpg",115,240,90,70);
+		$maxPage1 = 6;
+		$imageObject = new ContractImages();
+		$images = $imageObject->getImagesByContractID($this->getFkIdCommande());
 
-		$pdfPhoto->AddPage();
-		$tppl = $pdfPhoto->importPage(1);
-		$pdfPhoto->useTemplate($tppl, 0, 0, 210);
+		if(isset($images[0]) && !empty($images[0])){
+			$pdfPhoto->Image(dirname(dirname(__FILE__)).$images[0]->getUrl(),7.5,60,90,67.5);
+		}
+		if(isset($images[1]) && !empty($images[1])){
+			$pdfPhoto->Image(dirname(dirname(__FILE__)).$images[1]->getUrl(),112,60,90,67.5);
+		}
+		if(isset($images[2]) && !empty($images[2])){
+			$pdfPhoto->Image(dirname(dirname(__FILE__)).$images[2]->getUrl(),7.5,135,90,67.5);
+		}
+		if(isset($images[3]) && !empty($images[3])){
+			$pdfPhoto->Image(dirname(dirname(__FILE__)).$images[3]->getUrl(),112,135,90,67.5);
+		}
+		if(isset($images[4]) && !empty($images[4])){
+			$pdfPhoto->Image(dirname(dirname(__FILE__)).$images[4]->getUrl(),7.5,210,90,67.5);
+		}
+		if(isset($images[5]) && !empty($images[5])){
+			$pdfPhoto->Image(dirname(dirname(__FILE__)).$images[5]->getUrl(),112,210,90,67.5);
+		}
 
-		$pdfPhoto->Image(dirname(dirname(__FILE__))."/contracts/images/Contract 3904 - 1403 - Entrepot Bri - PF3.jpg",5,60,90,70);
-		$pdfPhoto->Image(dirname(dirname(__FILE__))."/contracts/images/Contract 3904 - 1403 - Entrepot Bri - PF3.jpg",115,60,90,70);
 
+
+		if(count($images) > 6) {
+			$pdfPhoto->AddPage();
+			$tppl = $pdfPhoto->importPage( 1 );
+			$pdfPhoto->useTemplate( $tppl, 0, 0, 210 );
+
+			if(isset($images[6]) && !empty($images[6])){
+				$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[6]->getUrl(), 5, 60, 90, 67.5 );
+			}
+			if(isset($images[7]) && !empty($images[7])){
+				$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[7]->getUrl(), 112, 60, 90, 67.5 );
+			}
+		}
 		$pdfPhotoAvant = $pdfPhoto->Output('','S');
-		$handle = fopen($pathToContract."/".$this->getFkIdCommande()."/PhotoAvant-".$nameFile, 'w') or die('Cannot open file:  '.$nameFile); //implicitly creates file
+		$handle = fopen($dirname.$namePagePhoto, 'w') or die('Cannot open file:  '.$namePagePhoto); //implicitly creates file
 		fwrite($handle,$pdfPhotoAvant);
 		fclose($handle);
-		$pdfPhotoAvantLink = dirname(dirname(__FILE__))."/contracts/".$this->getFkIdCommande()."/PhotoAvant-".$nameFile;
+		$pdfPhotoAvantLink = dirname(dirname(__FILE__))."/contracts/".$this->getFkIdCommande()."/".$namePagePhoto;
 
-		$fp_pdf = fopen($pdfContractLink, 'rb');
+		$pdfFinal = new Fpdi();
+		$pdfFinal->setSourceFile($pdfContractPage1Link);
+		$tppl = $pdfFinal->importPage(1,PdfReader\PageBoundaries::MEDIA_BOX);
+		$pdfFinal->AddPage();
+		$pdfFinal->useImportedPage($tppl, 0, 0, 210);
 
-		$img = new Imagick(); // [0] can be used to set page number
-		$img->setResolution(300,300);
-		$img->readImageFile($fp_pdf);
-		$img->setImageFormat( "jpg" );
-		$img->setImageCompression(imagick::COMPRESSION_JPEG);
-		$img->setImageCompressionQuality(90);
+		$pdfFinal->AddPage();
+		$pdfFinal->setSourceFile($pdfPhotoAvantLink);
+		$tppl = $pdfFinal->importPage(1);
+		$pdfFinal->useTemplate($tppl, 0, 0, 210);
 
-		$img->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+		if(count($images) > 6) {
+			$pdfFinal->AddPage();
+			$pdfFinal->setSourceFile($pdfPhotoAvantLink);
+			$tppl = $pdfFinal->importPage(2);
+			$pdfFinal->useTemplate($tppl, 0, 0, 210);
+		}
 
-		$data = $img->getImageBlob();
-		echo "<img src='".$data."'/>";
-		/*
-				$pdfFinal = new Fpdi();
-				$pdfFinal->setSourceFile($pdfContractLink);
-				$tppl = $pdfFinal->importPage(1,PdfReader\PageBoundaries::MEDIA_BOX);
-				$pdfFinal->AddPage();
-				$pdfFinal->useImportedPage($tppl, 0, 0, 210);
+		$pdfFinalString = $pdfFinal->Output('','S');
+		$handle = fopen($dirname.$nameContract, 'w') or die('Cannot open file:  '.$nameContract); //implicitly creates file
+		fwrite($handle,$pdfFinalString);
+		fclose($handle);
+		$this->setUrlContractPDF($UrlToContract."/".$this->getFkIdCommande()."/".$nameContract);
 
-				$pdfFinal->AddPage();
-				$pdfFinal->setSourceFile($pdfPhotoAvantLink);
-				$tppl = $pdfFinal->importPage(1);
-				$pdfFinal->useTemplate($tppl, 0, 0, 210);
-
-				$pdfFinal->AddPage();
-				$pdfFinal->setSourceFile($pdfPhotoAvantLink);
-				$tppl = $pdfFinal->importPage(2);
-				$pdfFinal->useTemplate($tppl, 0, 0, 210);
-
-				$pdfFinal->Output();
-		*/
 	}
 
 	/**

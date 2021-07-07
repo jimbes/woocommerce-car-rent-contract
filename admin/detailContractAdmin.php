@@ -329,8 +329,7 @@ function detailContractAdminFunction() {
 
         <div class="contractPDF">
 			<?php
-			//if ( ! empty( $contract->getUrlContractPDF() ) ) {
-			if ( ! empty( "" ) ) {
+			if ( ! empty( $contract->getUrlContractPDF() ) ) {
 				?>
                 <a href="<?php echo $contract->getUrlContractPDF() ?>">Ouvrir le PDF</a>
 				<?php if ( $contract->getStatus() != 3 ) { ?>
