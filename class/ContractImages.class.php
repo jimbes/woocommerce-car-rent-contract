@@ -109,12 +109,27 @@ class ContractImages {
 		}
 		if ( $arr != null ) {
 			foreach ( $arr as $row ) {
-				if ( $row->getType() == $type && $row->getImageValidation == $imageValidation ) {
+				if ( $row->getTypeImage() == $type && $row->getImageValidation() == $imageValidation ) {
 					return $row;
 				}
 			}
 		}
 		return null;
+	}
+	public function getImageByValidation( $array = null, $imageValidation = 1 ) {
+		$arr = $array;
+		$arrayFinal = array();
+		if ( $array == null ) {
+			$arr = $this->getImagesByContractID();
+		}
+		if ( $arr != null ) {
+			foreach ( $arr as $row ) {
+				if ($row->getImageValidation() == $imageValidation ) {
+					array_push($arrayFinal,$row);
+				}
+			}
+		}
+		return $arrayFinal;
 	}
 
 	public static function getNumberType() {

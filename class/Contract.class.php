@@ -318,6 +318,7 @@ class Contract {
 		$UrlToContract  = plugin_dir_url( dirname( __FILE__ ) ) . "contracts";
 		$namePage1      = "Page1-contract de loction n°" . $this->getFkIdCommande() . ".pdf";
 		$namePagePhoto  = "PhotoAvant-contract de loction n°" . $this->getFkIdCommande() . ".pdf";
+		$namePagePhotoApres  = "PhotoApres-contract de loction n°" . $this->getFkIdCommande() . ".pdf";
 		$nameContract   = "contract de loction n°" . $this->getFkIdCommande() . ".pdf";
 
 		$pdfContract = $pdfInit->Output( '', "S" );
@@ -335,6 +336,9 @@ class Contract {
 		$maxPage1    = 6;
 		$imageObject = new ContractImages();
 		$images      = $imageObject->getImagesByContractID( $this->getFkIdCommande() );
+		$images1     = $imageObject->getImageByValidation( $images, 1 );
+		$images2     = $imageObject->getImageByValidation( $images, 2 );
+
 		$pdfPhoto    = new Fpdi();
 		$pdfPhoto->AddPage();
 		$pdfPhoto->setSourceFile( dirname( __FILE__ ) . '/template/Contract-de-Location-Photos-Avant.pdf' );
@@ -344,36 +348,35 @@ class Contract {
 		$pdfPhoto->useTemplate( $tppl, 0, 0, 210 );
 
 
-		if ( isset( $images[0] ) && ! empty( $images[0] ) ) {
-			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[0]->getUrl(), 7.5, 60, 90, 67.5 );
+		if ( isset( $images1[0] ) && ! empty( $images1[0] ) ) {
+			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images1[0]->getUrl(), 7.5, 60, 90, 67.5 );
 		}
-		if ( isset( $images[1] ) && ! empty( $images[1] ) ) {
-			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[1]->getUrl(), 112, 60, 90, 67.5 );
+		if ( isset( $images1[1] ) && ! empty( $images1[1] ) ) {
+			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images1[1]->getUrl(), 112, 60, 90, 67.5 );
 		}
-		if ( isset( $images[2] ) && ! empty( $images[2] ) ) {
-			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[2]->getUrl(), 7.5, 135, 90, 67.5 );
+		if ( isset( $images1[2] ) && ! empty( $images1[2] ) ) {
+			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images1[2]->getUrl(), 7.5, 135, 90, 67.5 );
 		}
-		if ( isset( $images[3] ) && ! empty( $images[3] ) ) {
-			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[3]->getUrl(), 112, 135, 90, 67.5 );
+		if ( isset( $images1[3] ) && ! empty( $images1[3] ) ) {
+			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images1[3]->getUrl(), 112, 135, 90, 67.5 );
 		}
-		if ( isset( $images[4] ) && ! empty( $images[4] ) ) {
-			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[4]->getUrl(), 7.5, 210, 90, 67.5 );
+		if ( isset( $images1[4] ) && ! empty( $images1[4] ) ) {
+			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images1[4]->getUrl(), 7.5, 210, 90, 67.5 );
 		}
-		if ( isset( $images[5] ) && ! empty( $images[5] ) ) {
-			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[5]->getUrl(), 112, 210, 90, 67.5 );
+		if ( isset( $images1[5] ) && ! empty( $images1[5] ) ) {
+			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images1[5]->getUrl(), 112, 210, 90, 67.5 );
 		}
 
-
-		if ( count( $images ) > 6 ) {
+		if ( count( $images1 ) > 6 ) {
 			$pdfPhoto->AddPage();
 			$tppl = $pdfPhoto->importPage( 1 );
 			$pdfPhoto->useTemplate( $tppl, 0, 0, 210 );
 
-			if ( isset( $images[6] ) && ! empty( $images[6] ) ) {
-				$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[6]->getUrl(), 5, 60, 90, 67.5 );
+			if ( isset( $images1[6] ) && ! empty( $images1[6] ) ) {
+				$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images1[6]->getUrl(), 5, 60, 90, 67.5 );
 			}
-			if ( isset( $images[7] ) && ! empty( $images[7] ) ) {
-				$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[7]->getUrl(), 112, 60, 90, 67.5 );
+			if ( isset( $images1[7] ) && ! empty( $images1[7] ) ) {
+				$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images1[7]->getUrl(), 112, 60, 90, 67.5 );
 			}
 		}
 		$pdfPhotoAvant = $pdfPhoto->Output( '', 'S' );
@@ -381,6 +384,57 @@ class Contract {
 		fwrite( $handle, $pdfPhotoAvant );
 		fclose( $handle );
 		$pdfPhotoAvantLink = dirname( dirname( __FILE__ ) ) . "/contracts/" . $this->getFkIdCommande() . "/" . $namePagePhoto;
+
+		$pdfPhotoApres = null;
+		$pdfPhotoApresLink = null;
+		if(count($images2) > 0){
+			$pdfPhotoApres    = new Fpdi();
+			$pdfPhotoApres->AddPage();
+			$pdfPhotoApres->setSourceFile( dirname( __FILE__ ) . '/template/Contract-de-Location-Photos-Apres.pdf' );
+
+			$pagecount = $pdfPhotoApres->setSourceFile( dirname( __FILE__ ) . '/template/Contract-de-Location-Photos-Apres.pdf' );
+			$tppl      = $pdfPhotoApres->importPage( 1 );
+			$pdfPhotoApres->useTemplate( $tppl, 0, 0, 210 );
+
+
+			if ( isset( $images2[0] ) && ! empty( $images2[0] ) ) {
+				$pdfPhotoApres->Image( dirname( dirname( __FILE__ ) ) . $images2[0]->getUrl(), 7.5, 60, 90, 67.5 );
+			}
+			if ( isset( $images2[1] ) && ! empty( $images2[1] ) ) {
+				$pdfPhotoApres->Image( dirname( dirname( __FILE__ ) ) . $images2[1]->getUrl(), 112, 60, 90, 67.5 );
+			}
+			if ( isset( $images2[2] ) && ! empty( $images2[2] ) ) {
+				$pdfPhotoApres->Image( dirname( dirname( __FILE__ ) ) . $images2[2]->getUrl(), 7.5, 135, 90, 67.5 );
+			}
+			if ( isset( $images2[3] ) && ! empty( $images2[3] ) ) {
+				$pdfPhotoApres->Image( dirname( dirname( __FILE__ ) ) . $images2[3]->getUrl(), 112, 135, 90, 67.5 );
+			}
+			if ( isset( $images2[4] ) && ! empty( $images2[4] ) ) {
+				$pdfPhotoApres->Image( dirname( dirname( __FILE__ ) ) . $images2[4]->getUrl(), 7.5, 210, 90, 67.5 );
+			}
+			if ( isset( $images2[5] ) && ! empty( $images2[5] ) ) {
+				$pdfPhotoApres->Image( dirname( dirname( __FILE__ ) ) . $images2[5]->getUrl(), 112, 210, 90, 67.5 );
+			}
+
+			if ( count( $images2 ) > 6 ) {
+				$pdfPhotoApres->AddPage();
+				$tppl = $pdfPhotoApres->importPage( 1 );
+				$pdfPhotoApres->useTemplate( $tppl, 0, 0, 210 );
+
+				if ( isset( $images2[6] ) && ! empty( $images2[6] ) ) {
+					$pdfPhotoApres->Image( dirname( dirname( __FILE__ ) ) . $images2[6]->getUrl(), 5, 60, 90, 67.5 );
+				}
+				if ( isset( $images2[7] ) && ! empty( $images2[7] ) ) {
+					$pdfPhotoApres->Image( dirname( dirname( __FILE__ ) ) . $images2[7]->getUrl(), 112, 60, 90, 67.5 );
+				}
+			}
+			$pdfPhotoApresS = $pdfPhotoApres->Output( '', 'S' );
+			$handle = fopen( $dirname . $namePagePhotoApres, 'w' ) or die( 'Cannot open file:  ' . $namePagePhotoApres ); //implicitly creates file
+			fwrite( $handle, $pdfPhotoApresS );
+			fclose( $handle );
+			$pdfPhotoApresLink = dirname( dirname( __FILE__ ) ) . "/contracts/" . $this->getFkIdCommande() . "/" . $namePagePhotoApres;
+		}
+
 
 		$pdfFinal = new Fpdi();
 		$pdfFinal->setSourceFile( $pdfContractPage1Link );
@@ -393,11 +447,25 @@ class Contract {
 		$tppl = $pdfFinal->importPage( 1 );
 		$pdfFinal->useTemplate( $tppl, 0, 0, 210 );
 
-		if ( count( $images ) > 6 ) {
+		if ( count( $images1 ) > 6 ) {
 			$pdfFinal->AddPage();
 			$pdfFinal->setSourceFile( $pdfPhotoAvantLink );
 			$tppl = $pdfFinal->importPage( 2 );
 			$pdfFinal->useTemplate( $tppl, 0, 0, 210 );
+		}
+
+		if($pdfPhotoApres != null) {
+			$pdfFinal->AddPage();
+			$pdfFinal->setSourceFile( $pdfPhotoApresLink );
+			$tppl = $pdfFinal->importPage( 1 );
+			$pdfFinal->useTemplate( $tppl, 0, 0, 210 );
+
+			if ( count( $images2 ) > 6 ) {
+				$pdfFinal->AddPage();
+				$pdfFinal->setSourceFile( $pdfPhotoApresLink );
+				$tppl = $pdfFinal->importPage( 2 );
+				$pdfFinal->useTemplate( $tppl, 0, 0, 210 );
+			}
 		}
 
 		$pdfFinalString = $pdfFinal->Output( '', 'S' );

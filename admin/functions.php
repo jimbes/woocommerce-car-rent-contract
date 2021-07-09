@@ -46,6 +46,23 @@ function addContract(){
 		$contract->generatePDF();
 		$contract->setStatus(3);
 		$contract->updateContract();
+		if(isset($_FILES) && !empty($_FILES)){
+			foreach ($_FILES as $row => $file){
+				if($file["error"] == 0) {
+					$today = new DateTime();
+					$image = new ContractImages();
+					$image->setFkContracts( $contract->getFkIdCommande() );
+					$image->setTypeImage(substr($row,-1,1));
+					$image->setTitleImage($_POST["title-photo2-".$image->getTypeImage()]);
+					$image->setDescription("");
+					$image->setImageValidation(2);
+					$image->setCreateDate($today->format( 'Y-m-d H:i:s' ));
+					$image->setUpdateDate($today->format( 'Y-m-d H:i:s' ));
+					$image->uploadAndAdd($file,$contract->getFkIdCommande());
+				}
+			}
+			$contract->generatePDF();
+		}
 		update_field( 'kilometrage_reel',  intval($contract->getKmFinal()) , 'post_'.$_POST["carID"]);
 	}
 

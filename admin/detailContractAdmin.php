@@ -235,20 +235,20 @@ function detailContractAdminFunction() {
                         <img style="width: 100%;height:auto;"
                              src="/wp-content/plugins/woocommerce-car-rent-contract/admin/assets/images/coupe-voiture.jpg"/>
                     </div>
-                    <table style="margin-left:50px;">
+                    <table style="margin-left:60px;">
                         <thead>
                         <tr>
                             <th>Numéro</th>
-                            <th>Titre Image 1</th>
-                            <th>Image 1</th>
-                            <th>Titre Image 2</th>
-                            <th>Image 2</th>
+                            <th>Texte Photo Avant</th>
+                            <th>Photo Avant</th>
+                            <th>Texte Photo Après</th>
+                            <th>Photo Après</th>
                         </tr>
                         </thead>
                         <tbody>
 						<?php
 						$image = new ContractImages();
-						$image->setFkContracts( $contract->getId() );
+						$image->setFkContracts( $contract->getFkIdCommande() );
 						$images = $image->getImagesByContractID();
 						for ( $i = 1; $i <= ContractImages::getNumberType(); $i ++ ) {
 							?>
@@ -256,6 +256,7 @@ function detailContractAdminFunction() {
 								<?php
 								$tempObject  = $image->getImageByType( $i, $images, 1 );
 								$tempObject2 = $image->getImageByType( $i, $images, 2 );
+
 								if ( $tempObject == null ) {
 									echo "<td>" . $i . "</td>";
 									echo "<td><input type='texte' class='photoElem' name='title-photo-".$i."'></td>";
@@ -264,15 +265,15 @@ function detailContractAdminFunction() {
 								} else {
 									echo "<td>" . $tempObject->getTypeImage() . "</td>";
 									echo "<td>" . $tempObject->getTitleImage() . "</td>";
-									echo "<td><a width=150 src='" . $tempObject->getUrl() . "'></a></td>";
+									echo "<td><img width=150 src='/wp-content/plugins/woocommerce-car-rent-contract/" . $tempObject->getUrl() . "'/></td>";
 								}
 
 								if ( $tempObject2 == null ) {
-									echo "<td></td>";
-									echo "<td></td>";
+									echo "<td><input type='texte' class='photoElem' name='title-photo2-".$i."'></td>";
+									echo "<td><input type='file' class='photoElem' name='photo2-".$i."'></td>";
 								} else {
 									echo "<td>" . $tempObject2->getTitleImage() . "</td>";
-									echo "<td><a width=150 src='" . $tempObject2->getUrl() . "'></a></td>";
+									echo "<td><img width=150 src='/wp-content/plugins/woocommerce-car-rent-contract/" . $tempObject2->getUrl() . "'/></td>";
 								}
 
 								?>
