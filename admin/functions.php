@@ -18,7 +18,6 @@ function addContract(){
 	$contract->setUpdate($_POST["updateDate"]);
 	$contract->setStatus($_POST["status"]);
 
-
 	$contract->setArrayToThis($_POST);
 
 	if($contract->getStatus() < 2) {

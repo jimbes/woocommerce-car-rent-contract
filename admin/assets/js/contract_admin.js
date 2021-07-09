@@ -57,17 +57,19 @@
             $(this).text("Modifier");
             $.each(parent.find("table tr"), function (index, element) {
                 if ($(this).attr('class').split(' ')[1] == "date") {
-                    var datearray = $(element).children('td').eq(1).find("input").val().split("-");
-                    var dateFR = datearray[2] + "/" + datearray[1] + "/" + datearray[0];
-                    $(element).children('td').eq(1).html(dateFR);
-                    $(element).children('td').eq(2).find("input").val(dateFR)
+                    if($(element).children('td').eq(1).find("input").val() !== "") {
+                        var datearray = $(element).children('td').eq(1).find("input").val().split("-");
+                        var dateFR = datearray[2] + "/" + datearray[1] + "/" + datearray[0];
+                        $(element).children('td').eq(1).html(dateFR);
+                        $(element).children('td').eq(2).find("input").attr("value", dateFR);
+                    }
                 } else if ($(this).attr('class').split(' ')[1] == "datetime-local") {
                     var splitSpace = $(element).children('td').eq(1).find("input").val().split('T');
                     var dateFRarray = splitSpace[0].split('-');
                     var dateheure = dateFRarray[2] + "/" + dateFRarray[1] + "/" + dateFRarray[0] + " à " + splitSpace[1];
                     $(element).children('td').eq(1).html(dateheure);
                     $(element).children('td').eq(2).find("input").val(dateheure)
-                } if ($(this).attr('class').split(' ')[1] == "checkbox") {
+                } else if ($(this).attr('class').split(' ')[1] == "checkbox") {
                     if($(element).children('td').eq(1).find("input").is(':checked')){
                         $(element).children('td').eq(1).html("Oui");
                         $(element).children('td').eq(2).find("input").val(1);

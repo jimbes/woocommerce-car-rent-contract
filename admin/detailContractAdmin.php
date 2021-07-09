@@ -82,8 +82,7 @@ function detailContractAdminFunction() {
             <input type="hidden" name="idContract" value="<?php echo $contract->getId() ?>"/>
 		<?php } ?>
 
-        <div class="debut <?php if ( $contract->getStatus() == 2 )
-			echo 'hidden' ?>">
+        <div class="debut">
             <h2>Demande de la location</h2>
             <div class="locataire block">
                 <h3>Locataire</h3>
@@ -121,7 +120,7 @@ function detailContractAdminFunction() {
                         <td><input type="hidden" name="adresse" value="<?php echo $contract->getAddress() ?>"/></td>
                     </tr>
                 </table>
-                <div class="action <?php if ( $contract->getStatus() == 3 )
+                <div class="action <?php if ( $contract->getStatus() >= 2 )
 					echo 'hidden' ?>">
                     <button class="modify_block">Modifier</button>
                 </div>
@@ -136,7 +135,7 @@ function detailContractAdminFunction() {
                                    value="<?php echo $contract->getProprioName() ?>"/></td>
                     </tr>
                 </table>
-                <div class="action <?php if ( $contract->getStatus() == 3 )
+                <div class="action <?php if ( $contract->getStatus() >= 2 )
 					echo 'hidden' ?>">
                     <button class="modify_block">Modifier</button>
                 </div>
@@ -168,7 +167,7 @@ function detailContractAdminFunction() {
                         </td>
                     </tr>
                 </table>
-                <div class="action <?php if ( $contract->getStatus() == 3 )
+                <div class="action <?php if ( $contract->getStatus() >= 2 )
 					echo 'hidden' ?>">
                     <button class="modify_block">Modifier</button>
                 </div>
@@ -209,7 +208,8 @@ function detailContractAdminFunction() {
                         <td><input type="hidden" name="price" value="<?php echo $contract->getPrice() ?>"/></td>
                     </tr>
                 </table>
-                <div class="action <?php if ( $contract->getStatus() == 3 )
+
+                <div class="action <?php if ( $contract->getStatus() >= 2  )
 					echo 'hidden' ?>">
                     <button class="modify_block">Modifier</button>
                 </div>
@@ -223,7 +223,7 @@ function detailContractAdminFunction() {
                         <td><input type="hidden" name="insurance" value="<?php echo $contract->getInsurance() ?>"/></td>
                     </tr>
                 </table>
-                <div class="action <?php if ( $contract->getStatus() == 3 )
+                <div class="action <?php if ( $contract->getStatus() >= 2 )
 					echo 'hidden' ?>">
                     <button class="modify_block">Modifier</button>
                 </div>
@@ -287,8 +287,7 @@ function detailContractAdminFunction() {
         </div>
 
 
-        <div class="fin <?php if ( $contract->getStatus() < 2 )
-			echo 'hidden' ?>">
+        <div class="fin <?php if ( $contract->getStatus() < 2 ) echo 'hidden'; ?>">
             <h2>Fin de la location</h2>
             <div class="compte-rendu block">
                 <h3>Compte rendu</h3>

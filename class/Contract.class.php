@@ -1,12 +1,12 @@
 <?php
 
-require('pdf/FPDM.php');
-require('pdf/fpdf.php');
+require( 'pdf/FPDM.php' );
+require( 'pdf/fpdf.php' );
 
 use setasign\Fpdi\Fpdi;
 use setasign\Fpdi\PdfReader;
 
-require('pdf/FPDI/autoload.php');
+require( 'pdf/FPDI/autoload.php' );
 
 class Contract {
 
@@ -63,28 +63,28 @@ class Contract {
 	}
 
 
-	public function createContract(){
+	public function createContract() {
 		global $wpdb;
-		$result = $wpdb->insert($wpdb->prefix . 'wcc_contracts', [
-			'fkOrder'       => $this->getFkIdCommande(),
-			'fkUser'        => $this->getFkIdUser(),
-			'createDate'    => $this->getCreateDate(),
-			'updateDate'    => $this->getUpdate(),
-			'data'          => $this->getThisToJson()
-		]);
-		$this->setId($wpdb->insert_id);
+		$result = $wpdb->insert( $wpdb->prefix . 'wcc_contracts', [
+			'fkOrder'    => $this->getFkIdCommande(),
+			'fkUser'     => $this->getFkIdUser(),
+			'createDate' => $this->getCreateDate(),
+			'updateDate' => $this->getUpdate(),
+			'data'       => $this->getThisToJson()
+		] );
+		$this->setId( $wpdb->insert_id );
 	}
 
-	public function updateContract(){
+	public function updateContract() {
 
 
 		global $wpdb;
-		$result = $wpdb->update($wpdb->prefix . 'wcc_contracts', [
-			'fkOrder'       => $this->getFkIdCommande(),
-			'fkUser'        => $this->getFkIdUser(),
-			'createDate'    => $this->getCreateDate(),
-			'updateDate'    => $this->getUpdate(),
-			'data'          => $this->getThisToJson()
+		$result = $wpdb->update( $wpdb->prefix . 'wcc_contracts', [
+			'fkOrder'    => $this->getFkIdCommande(),
+			'fkUser'     => $this->getFkIdUser(),
+			'createDate' => $this->getCreateDate(),
+			'updateDate' => $this->getUpdate(),
+			'data'       => $this->getThisToJson()
 		], [
 			'id' => $this->getId()
 		], [
@@ -95,141 +95,145 @@ class Contract {
 			'%s'
 		], [
 			'%d'
-		]);
+		] );
 	}
 
-	public function getContractByID($id){
+	public function getContractByID( $id ) {
 		global $wpdb;
 
 		$filter = "WHERE id = " . $id;
 
-		$result = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."wcc_contracts " . $filter . " LIMIT 2 ", OBJECT);
+		$result = $wpdb->get_results( "SELECT * FROM " . $wpdb->prefix . "wcc_contracts " . $filter . " LIMIT 2 ", OBJECT );
 
-		if ($result[0] == null || sizeof($result) == 0) {
+		if ( $result[0] == null || sizeof( $result ) == 0 ) {
 			return null;
 		}
 
-		$this->setId($result[0]->id);
-		$this->setFkIdCommande($result[0]->fkOrder);
-		$this->setFkIdUser($result[0]->fkUser);
-		$this->setCreateDate($result[0]->createDate);
-		$this->setUpdate($result[0]->updateDate);
-		$this->setJsonToThis($result->data);
+		$this->setId( $result[0]->id );
+		$this->setFkIdCommande( $result[0]->fkOrder );
+		$this->setFkIdUser( $result[0]->fkUser );
+		$this->setCreateDate( $result[0]->createDate );
+		$this->setUpdate( $result[0]->updateDate );
+		$this->setJsonToThis( $result->data );
 
 		return $this;
 	}
 
-	public function getContractByOrderID($idOrder){
+	public function getContractByOrderID( $idOrder ) {
 		global $wpdb;
 
 		$filter = "WHERE fkOrder = " . $idOrder;
 
-		$result = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."wcc_contracts " . $filter . " LIMIT 2 ", OBJECT);
+		$result = $wpdb->get_results( "SELECT * FROM " . $wpdb->prefix . "wcc_contracts " . $filter . " LIMIT 2 ", OBJECT );
 
-		if ($result[0] == null || sizeof($result) == 0) {
+		if ( $result[0] == null || sizeof( $result ) == 0 ) {
 			return null;
 		}
 
-		$this->setId($result[0]->id);
-		$this->setFkIdCommande($result[0]->fkOrder);
-		$this->setFkIdUser($result[0]->fkUser);
-		$this->setCreateDate($result[0]->createDate);
-		$this->setUpdate($result[0]->updateDate);
-		$this->setJsonToThis($result[0]->data);
+		$this->setId( $result[0]->id );
+		$this->setFkIdCommande( $result[0]->fkOrder );
+		$this->setFkIdUser( $result[0]->fkUser );
+		$this->setCreateDate( $result[0]->createDate );
+		$this->setUpdate( $result[0]->updateDate );
+		$this->setJsonToThis( $result[0]->data );
 
 		return $this;
 	}
-	public function getThisToArray(){
-		return get_object_vars ($this);
+
+	public function getThisToArray() {
+		return get_object_vars( $this );
 	}
-	public function setArrayToThis($array){
-		$this->setLname(strip_tags ($array['lName']));
-		$this->setFname(strip_tags ($array['fName']));
-		$this->setDob(strip_tags ($array['dob']));
-		$this->setDriverlicense(strip_tags ($array['nPermis']));
-		$this->setDriverdate(strip_tags ($array['permisDate']));
-		$this->setAddress(strip_tags ($array['adresse']));
-		$this->setProprioName(strip_tags ($array['nomProprietaire']));
-		$this->setModel(strip_tags ($array['model']));
-		$this->setIdCar(strip_tags ($array['numCar']));
-		$this->setFuel(strip_tags ($array['fuel']));
-		$this->setKilVoiture(strip_tags ($array['kilVoiture']));
-		$this->setStartDate(strip_tags ($array['start']));
-		$this->setEndDate(strip_tags ($array['end']));
-		$this->setDeliveryAddress(strip_tags ($array['delivery']));
-		$this->setKilometers(strip_tags ($array['kilometre']));
-		$this->setLevelFuel(strip_tags ($array['levelFuel']));
-		$this->setPrice(strip_tags ($array['price']));
-		$this->setInsurance(strip_tags ($array['insurance']));
-		$this->setKmFinal(strip_tags ($array['kmFinal']));
-		$this->setFuelFinal(strip_tags ($array['fuelFinal']));
-		$this->setDateFinal(strip_tags ($array['dateFinal']));
-		$this->setCarBroken(strip_tags ($array['carBroken']));
-		$this->setComment(strip_tags ($array['comment']));
-		$this->setUrlContractPDF(strip_tags ($array['pdfLink']));
-		$this->setStatus(strip_tags ($array['status']));
+
+	public function setArrayToThis( $array ) {
+		$this->setLname( strip_tags( $array['lName'] ) );
+		$this->setFname( strip_tags( $array['fName'] ) );
+		$this->setDob( strip_tags( $array['dob'] ) );
+		$this->setDriverlicense( strip_tags( $array['nPermis'] ) );
+		$this->setDriverdate( strip_tags( $array['permisDate'] ) );
+		$this->setAddress( strip_tags( $array['adresse'] ) );
+		$this->setProprioName( strip_tags( $array['nomProprietaire'] ) );
+		$this->setModel( strip_tags( $array['model'] ) );
+		$this->setIdCar( strip_tags( $array['numCar'] ) );
+		$this->setFuel( strip_tags( $array['fuel'] ) );
+		$this->setKilVoiture( strip_tags( $array['kilVoiture'] ) );
+		$this->setStartDate( strip_tags( $array['start'] ) );
+		$this->setEndDate( strip_tags( $array['end'] ) );
+		$this->setDeliveryAddress( strip_tags( $array['delivery'] ) );
+		$this->setKilometers( strip_tags( $array['kilometre'] ) );
+		$this->setLevelFuel( strip_tags( $array['levelFuel'] ) );
+		$this->setPrice( strip_tags( $array['price'] ) );
+		$this->setInsurance( strip_tags( $array['insurance'] ) );
+		$this->setKmFinal( strip_tags( $array['kmFinal'] ) );
+		$this->setFuelFinal( strip_tags( $array['fuelFinal'] ) );
+		$this->setDateFinal( strip_tags( $array['dateFinal'] ) );
+		$this->setCarBroken( strip_tags( $array['carBroken'] ) );
+		$this->setComment( strip_tags( $array['comment'] ) );
+		$this->setUrlContractPDF( strip_tags( $array['pdfLink'] ) );
+		$this->setStatus( strip_tags( $array['status'] ) );
 	}
 
 
-	public function getThisToJson(){
+	public function getThisToJson() {
 		$array = array(
-			"lName"             => $this->getLname(),
-			"fName"             => $this->getFname(),
-			"dob"               => $this->getDob(),
-			"nPermis"           => $this->getDriverlicense(),
-			"permisDate"        => $this->getDriverdate(),
-			"adresse"           => $this->getAddress(),
-			"nomProprietaire"   => $this->getProprioName(),
-			"model"             => $this->getModel(),
-			"numCar"            => $this->getIdCar(),
-			"fuel"              => $this->getFuel(),
-			"kilVoiture"        => $this->getKilVoiture(),
-			"start"             => $this->getStartDate(),
-			"end"               => $this->getEndDate(),
-			"delivery"          => $this->getDeliveryAddress(),
-			"kilometre"         => $this->getKilometers(),
-			"levelFuel"         => $this->getLevelFuel(),
-			"price"             => $this->getPrice(),
-			"insurance"         => $this->getInsurance(),
-			"pdfLink"           => $this->getUrlContractPDF(),
-			"kmFinal"           => $this->getKmFinal(),
-			"fuelFinal"         => $this->getFuelFinal(),
-			"dateFinal"         => $this->getDateFinal(),
-			"carBroken"         => $this->getCarBroken(),
-			"comment"           => $this->getComment(),
-			"status"            => $this->getStatus()
+			"lName"           => $this->getLname(),
+			"fName"           => $this->getFname(),
+			"dob"             => $this->getDob(),
+			"nPermis"         => $this->getDriverlicense(),
+			"permisDate"      => $this->getDriverdate(),
+			"adresse"         => $this->getAddress(),
+			"nomProprietaire" => $this->getProprioName(),
+			"model"           => $this->getModel(),
+			"numCar"          => $this->getIdCar(),
+			"fuel"            => $this->getFuel(),
+			"kilVoiture"      => $this->getKilVoiture(),
+			"start"           => $this->getStartDate(),
+			"end"             => $this->getEndDate(),
+			"delivery"        => $this->getDeliveryAddress(),
+			"kilometre"       => $this->getKilometers(),
+			"levelFuel"       => $this->getLevelFuel(),
+			"price"           => $this->getPrice(),
+			"insurance"       => $this->getInsurance(),
+			"pdfLink"         => $this->getUrlContractPDF(),
+			"kmFinal"         => $this->getKmFinal(),
+			"fuelFinal"       => $this->getFuelFinal(),
+			"dateFinal"       => $this->getDateFinal(),
+			"carBroken"       => $this->getCarBroken(),
+			"comment"         => $this->getComment(),
+			"status"          => $this->getStatus()
 		);
-		return json_encode($array);
-	}
-	public function setJsonToThis($json){
-		$this->setArrayToThis(json_decode($json, true));
+
+		return json_encode( $array );
 	}
 
-	public function generatePDF(){
+	public function setJsonToThis( $json ) {
+		$this->setArrayToThis( json_decode( $json, true ) );
+	}
+
+	public function generatePDF() {
 
 		$fields = array(
-			'numContract'   => $this->getFkIdCommande(),
-			'nPermis'       => $this->getDriverlicense(),
-			'permisDate'    => $this->getDriverdate(),
-			'fullname'      => $this->getFname()." ".$this->getLname(),
-			'dob'           => $this->getDob(),
-			'adresse'       => $this->getAddress(),
-			'model'         => $this->getModel(),
-			'numCar'        => $this->getIdCar(),
-			'fuel'          => $this->getFuel(),
-			'start'         => $this->getStartDate(),
-			'end'           => $this->getEndDate(),
-			'delivery'      => $this->getDeliveryAddress(),
-			'kilometre'     => $this->getKilometers(),
-			'levelFuel'     => $this->getLevelFuel(),
-			'price'         => $this->getPrice(),
-			'insurance'     => $this->getInsurance(),
-			'kmFinal'       => $this->getKmFinal(),
-			'distance'      => $this->getDistance(),
-			'fuelFinal'     => $this->getFuelFinal(),
-			'dateFinal'     => $this->getDateFinal(),
-			'comments'      => $this->getComment(),
-			'broken'     => $this->getCarBrokenText()
+			'numContract' => $this->getFkIdCommande(),
+			'nPermis'     => $this->getDriverlicense(),
+			'permisDate'  => $this->getDriverdate(),
+			'fullname'    => $this->getFname() . " " . $this->getLname(),
+			'dob'         => $this->getDob(),
+			'adresse'     => $this->getAddress(),
+			'model'       => $this->getModel(),
+			'numCar'      => $this->getIdCar(),
+			'fuel'        => $this->getFuel(),
+			'start'       => $this->getStartDate(),
+			'end'         => $this->getEndDate(),
+			'delivery'    => $this->getDeliveryAddress(),
+			'kilometre'   => $this->getKilometers(),
+			'levelFuel'   => $this->getLevelFuel(),
+			'price'       => $this->getPrice(),
+			'insurance'   => $this->getInsurance(),
+			'kmFinal'     => $this->getKmFinal(),
+			'distance'    => $this->getDistance(),
+			'fuelFinal'   => $this->getFuelFinal(),
+			'dateFinal'   => $this->getDateFinal(),
+			'comments'    => $this->getComment(),
+			'broken'      => $this->getCarBrokenText()
 		);
 
 
@@ -241,169 +245,166 @@ class Contract {
 		*/
 
 		$pdfInit = new Fpdi();
-		$pdfInit->AddFont('roboto','','roboto.php');
+		$pdfInit->AddFont( 'roboto', '', 'roboto.php' );
 		$pdfInit->AddPage();
-		$pdfInit->setSourceFile(dirname(__FILE__).'/template/Contract-de-Location-Page1.pdf');
-		$tppl = $pdfInit->importPage(1);
-		$pdfInit->useTemplate($tppl, 0, 0, 210);
+		$pdfInit->setSourceFile( dirname( __FILE__ ) . '/template/Contract-de-Location-Page1.pdf' );
+		$tppl = $pdfInit->importPage( 1 );
+		$pdfInit->useTemplate( $tppl, 0, 0, 210 );
 
 
-		$pdfInit->SetFont('roboto','',18);
-		$pdfInit->SetXY(145, 45);
-		$pdfInit->SetTextColor(255,255,255);
-		$pdfInit->Write(0, $this->getFkIdCommande());
+		$pdfInit->SetFont( 'roboto', '', 18 );
+		$pdfInit->SetXY( 145, 45 );
+		$pdfInit->SetTextColor( 255, 255, 255 );
+		$pdfInit->Write( 0, $this->getFkIdCommande() );
 
-		$pdfInit->SetFont('roboto','',13);
-		$pdfInit->SetTextColor(102,102,102);
+		$pdfInit->SetFont( 'roboto', '', 13 );
+		$pdfInit->SetTextColor( 102, 102, 102 );
 
-		$pdfInit->SetXY(45, 74.5);
-		$pdfInit->Write(0, utf8_decode($this->getDriverlicense()));
-		$pdfInit->SetXY(51, 82.5);
-		$pdfInit->Write(0, utf8_decode($this->getDriverdate()));
-		$pdfInit->SetXY(124, 74.5);
-		$pdfInit->Write(0, utf8_decode($this->getFname()." ".$this->getLname()));
-		$pdfInit->SetXY(152, 82.5);
-		$pdfInit->Write(0, $this->getDob());
-		$pdfInit->SetXY(36, 90.5);
-		$pdfInit->Write(0, utf8_decode($this->getAddress()));
-
-
-		$pdfInit->SetXY(130, 109);
-		$pdfInit->Write(0, utf8_decode($this->getModel()));
-		$pdfInit->SetXY(60, 116.5);
-		$pdfInit->Write(0, $this->getIdCar());
-		$pdfInit->SetXY(135, 116.5);
-		$pdfInit->Write(0, $this->getFuel());
+		$pdfInit->SetXY( 45, 74.5 );
+		$pdfInit->Write( 0, utf8_decode( $this->getDriverlicense() ) );
+		$pdfInit->SetXY( 51, 82.5 );
+		$pdfInit->Write( 0, utf8_decode( $this->getDriverdate() ) );
+		$pdfInit->SetXY( 124, 74.5 );
+		$pdfInit->Write( 0, utf8_decode( $this->getFname() . " " . $this->getLname() ) );
+		$pdfInit->SetXY( 152, 82.5 );
+		$pdfInit->Write( 0, $this->getDob() );
+		$pdfInit->SetXY( 36, 90.5 );
+		$pdfInit->Write( 0, utf8_decode( $this->getAddress() ) );
 
 
-		$pdfInit->SetXY(35, 143);
-		$pdfInit->Write(0, utf8_decode($this->getStartDate()));
-		$pdfInit->SetXY(28, 151);
-		$pdfInit->Write(0, utf8_decode($this->getEndDate()));
-		$pdfInit->SetXY(50, 159);
-		$pdfInit->Write(0, utf8_decode($this->getDeliveryAddress()));
-		$pdfInit->SetXY(148, 143);
-		$pdfInit->Write(0, utf8_decode($this->getKilometers()));
-		$pdfInit->SetXY(155, 151);
-		$pdfInit->Write(0, $this->getLevelFuel());
-		$pdfInit->SetXY(151, 159);
-		$pdfInit->Write(0,utf8_decode($this->getPrice()));
+		$pdfInit->SetXY( 130, 109 );
+		$pdfInit->Write( 0, utf8_decode( $this->getModel() ) );
+		$pdfInit->SetXY( 60, 116.5 );
+		$pdfInit->Write( 0, $this->getIdCar() );
+		$pdfInit->SetXY( 135, 116.5 );
+		$pdfInit->Write( 0, $this->getFuel() );
 
 
-		$pdfInit->SetXY(38, 178.5);
-		$pdfInit->Write(0,utf8_decode($this->getInsurance()));
+		$pdfInit->SetXY( 35, 143 );
+		$pdfInit->Write( 0, utf8_decode( $this->getStartDate() ) );
+		$pdfInit->SetXY( 28, 151 );
+		$pdfInit->Write( 0, utf8_decode( $this->getEndDate() ) );
+		$pdfInit->SetXY( 50, 159 );
+		$pdfInit->Write( 0, utf8_decode( $this->getDeliveryAddress() ) );
+		$pdfInit->SetXY( 148, 143 );
+		$pdfInit->Write( 0, utf8_decode( $this->getKilometers() ) );
+		$pdfInit->SetXY( 155, 151 );
+		$pdfInit->Write( 0, $this->getLevelFuel() );
+		$pdfInit->SetXY( 151, 159 );
+		$pdfInit->Write( 0, utf8_decode( $this->getPrice() ) );
 
 
-		$pdfInit->SetXY(57, 197.5);
-		$pdfInit->Write(0,utf8_decode($this->getKmFinal()));
-		$pdfInit->SetXY(59, 205.5);
-		$pdfInit->Write(0,utf8_decode($this->getDistance()));
-		$pdfInit->SetXY(61, 213);
-		$pdfInit->Write(0,utf8_decode($this->getFuelFinal()));
-		$pdfInit->SetXY(136, 197.5);
-		$pdfInit->Write(0,utf8_decode($this->getDateFinal()));
-		$pdfInit->SetXY(153, 205.5);
-		$pdfInit->Write(0,utf8_decode($this->getCarBrokenText()));
+		$pdfInit->SetXY( 38, 178.5 );
+		$pdfInit->Write( 0, utf8_decode( $this->getInsurance() ) );
 
 
-		$pdfInit->SetXY(18, 227);
-		$pdfInit->Write(0,utf8_decode($this->getComment()));
+		$pdfInit->SetXY( 57, 197.5 );
+		$pdfInit->Write( 0, utf8_decode( $this->getKmFinal() ) );
+		$pdfInit->SetXY( 59, 205.5 );
+		$pdfInit->Write( 0, utf8_decode( $this->getDistance() ) );
+		$pdfInit->SetXY( 61, 213 );
+		$pdfInit->Write( 0, utf8_decode( $this->getFuelFinal() ) );
+		$pdfInit->SetXY( 136, 197.5 );
+		$pdfInit->Write( 0, utf8_decode( $this->getDateFinal() ) );
+		$pdfInit->SetXY( 153, 205.5 );
+		$pdfInit->Write( 0, utf8_decode( $this->getCarBrokenText() ) );
 
 
-		$pathToContract = dirname(dirname(__FILE__))."/contracts";
-		$UrlToContract = plugin_dir_url(dirname(__FILE__))."contracts";
-		$namePage1 = "Page1-contract de loction n°".$this->getFkIdCommande().".pdf";
-		$namePagePhoto = "PhotoAvant-contract de loction n°".$this->getFkIdCommande().".pdf";
-		$nameContract = "contract de loction n°".$this->getFkIdCommande().".pdf";
+		$pdfInit->SetXY( 18, 227 );
+		$pdfInit->Write( 0, utf8_decode( $this->getComment() ) );
 
-		$pdfContract = $pdfInit->Output('', "S");
 
-		$dirname = $pathToContract."/".$this->getFkIdCommande()."/";
-		if (!is_dir($dirname))
-		{
-			mkdir($dirname, 0755, true);
+		$pathToContract = dirname( dirname( __FILE__ ) ) . "/contracts";
+		$UrlToContract  = plugin_dir_url( dirname( __FILE__ ) ) . "contracts";
+		$namePage1      = "Page1-contract de loction n°" . $this->getFkIdCommande() . ".pdf";
+		$namePagePhoto  = "PhotoAvant-contract de loction n°" . $this->getFkIdCommande() . ".pdf";
+		$nameContract   = "contract de loction n°" . $this->getFkIdCommande() . ".pdf";
+
+		$pdfContract = $pdfInit->Output( '', "S" );
+
+		$dirname = $pathToContract . "/" . $this->getFkIdCommande() . "/";
+		if ( ! is_dir( $dirname ) ) {
+			mkdir( $dirname, 0755, true );
 		}
-		$handle = fopen($dirname.$namePage1, 'w') or die('Cannot open file:  '.$namePage1); //implicitly creates file
-		fwrite($handle,$pdfContract);
-		fclose($handle);
+		$handle = fopen( $dirname . $namePage1, 'w' ) or die( 'Cannot open file:  ' . $namePage1 ); //implicitly creates file
+		fwrite( $handle, $pdfContract );
+		fclose( $handle );
 
-		$pdfContractPage1Link = dirname(dirname(__FILE__))."/contracts/".$this->getFkIdCommande()."/".$namePage1;
+		$pdfContractPage1Link = dirname( dirname( __FILE__ ) ) . "/contracts/" . $this->getFkIdCommande() . "/" . $namePage1;
 
-
-		$pdfPhoto = new Fpdi();
-		$pdfPhoto->AddPage();
-		$pdfPhoto->setSourceFile(dirname(__FILE__).'/template/Contract-de-Location-Photos-Avant.pdf');
-
-		$pagecount = $pdfPhoto->setSourceFile(dirname(__FILE__).'/template/Contract-de-Location-Photos-Avant.pdf');
-		$tppl = $pdfPhoto->importPage(1);
-		$pdfPhoto->useTemplate($tppl, 0, 0, 210);
-
-		$maxPage1 = 6;
+		$maxPage1    = 6;
 		$imageObject = new ContractImages();
-		$images = $imageObject->getImagesByContractID($this->getFkIdCommande());
+		$images      = $imageObject->getImagesByContractID( $this->getFkIdCommande() );
+		$pdfPhoto    = new Fpdi();
+		$pdfPhoto->AddPage();
+		$pdfPhoto->setSourceFile( dirname( __FILE__ ) . '/template/Contract-de-Location-Photos-Avant.pdf' );
 
-		if(isset($images[0]) && !empty($images[0])){
-			$pdfPhoto->Image(dirname(dirname(__FILE__)).$images[0]->getUrl(),7.5,60,90,67.5);
-		}
-		if(isset($images[1]) && !empty($images[1])){
-			$pdfPhoto->Image(dirname(dirname(__FILE__)).$images[1]->getUrl(),112,60,90,67.5);
-		}
-		if(isset($images[2]) && !empty($images[2])){
-			$pdfPhoto->Image(dirname(dirname(__FILE__)).$images[2]->getUrl(),7.5,135,90,67.5);
-		}
-		if(isset($images[3]) && !empty($images[3])){
-			$pdfPhoto->Image(dirname(dirname(__FILE__)).$images[3]->getUrl(),112,135,90,67.5);
-		}
-		if(isset($images[4]) && !empty($images[4])){
-			$pdfPhoto->Image(dirname(dirname(__FILE__)).$images[4]->getUrl(),7.5,210,90,67.5);
-		}
-		if(isset($images[5]) && !empty($images[5])){
-			$pdfPhoto->Image(dirname(dirname(__FILE__)).$images[5]->getUrl(),112,210,90,67.5);
-		}
+		$pagecount = $pdfPhoto->setSourceFile( dirname( __FILE__ ) . '/template/Contract-de-Location-Photos-Avant.pdf' );
+		$tppl      = $pdfPhoto->importPage( 1 );
+		$pdfPhoto->useTemplate( $tppl, 0, 0, 210 );
 
 
+		if ( isset( $images[0] ) && ! empty( $images[0] ) ) {
+			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[0]->getUrl(), 7.5, 60, 90, 67.5 );
+		}
+		if ( isset( $images[1] ) && ! empty( $images[1] ) ) {
+			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[1]->getUrl(), 112, 60, 90, 67.5 );
+		}
+		if ( isset( $images[2] ) && ! empty( $images[2] ) ) {
+			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[2]->getUrl(), 7.5, 135, 90, 67.5 );
+		}
+		if ( isset( $images[3] ) && ! empty( $images[3] ) ) {
+			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[3]->getUrl(), 112, 135, 90, 67.5 );
+		}
+		if ( isset( $images[4] ) && ! empty( $images[4] ) ) {
+			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[4]->getUrl(), 7.5, 210, 90, 67.5 );
+		}
+		if ( isset( $images[5] ) && ! empty( $images[5] ) ) {
+			$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[5]->getUrl(), 112, 210, 90, 67.5 );
+		}
 
-		if(count($images) > 6) {
+
+		if ( count( $images ) > 6 ) {
 			$pdfPhoto->AddPage();
 			$tppl = $pdfPhoto->importPage( 1 );
 			$pdfPhoto->useTemplate( $tppl, 0, 0, 210 );
 
-			if(isset($images[6]) && !empty($images[6])){
+			if ( isset( $images[6] ) && ! empty( $images[6] ) ) {
 				$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[6]->getUrl(), 5, 60, 90, 67.5 );
 			}
-			if(isset($images[7]) && !empty($images[7])){
+			if ( isset( $images[7] ) && ! empty( $images[7] ) ) {
 				$pdfPhoto->Image( dirname( dirname( __FILE__ ) ) . $images[7]->getUrl(), 112, 60, 90, 67.5 );
 			}
 		}
-		$pdfPhotoAvant = $pdfPhoto->Output('','S');
-		$handle = fopen($dirname.$namePagePhoto, 'w') or die('Cannot open file:  '.$namePagePhoto); //implicitly creates file
-		fwrite($handle,$pdfPhotoAvant);
-		fclose($handle);
-		$pdfPhotoAvantLink = dirname(dirname(__FILE__))."/contracts/".$this->getFkIdCommande()."/".$namePagePhoto;
+		$pdfPhotoAvant = $pdfPhoto->Output( '', 'S' );
+		$handle = fopen( $dirname . $namePagePhoto, 'w' ) or die( 'Cannot open file:  ' . $namePagePhoto ); //implicitly creates file
+		fwrite( $handle, $pdfPhotoAvant );
+		fclose( $handle );
+		$pdfPhotoAvantLink = dirname( dirname( __FILE__ ) ) . "/contracts/" . $this->getFkIdCommande() . "/" . $namePagePhoto;
 
 		$pdfFinal = new Fpdi();
-		$pdfFinal->setSourceFile($pdfContractPage1Link);
-		$tppl = $pdfFinal->importPage(1,PdfReader\PageBoundaries::MEDIA_BOX);
+		$pdfFinal->setSourceFile( $pdfContractPage1Link );
+		$tppl = $pdfFinal->importPage( 1, PdfReader\PageBoundaries::MEDIA_BOX );
 		$pdfFinal->AddPage();
-		$pdfFinal->useImportedPage($tppl, 0, 0, 210);
+		$pdfFinal->useImportedPage( $tppl, 0, 0, 210 );
 
 		$pdfFinal->AddPage();
-		$pdfFinal->setSourceFile($pdfPhotoAvantLink);
-		$tppl = $pdfFinal->importPage(1);
-		$pdfFinal->useTemplate($tppl, 0, 0, 210);
+		$pdfFinal->setSourceFile( $pdfPhotoAvantLink );
+		$tppl = $pdfFinal->importPage( 1 );
+		$pdfFinal->useTemplate( $tppl, 0, 0, 210 );
 
-		if(count($images) > 6) {
+		if ( count( $images ) > 6 ) {
 			$pdfFinal->AddPage();
-			$pdfFinal->setSourceFile($pdfPhotoAvantLink);
-			$tppl = $pdfFinal->importPage(2);
-			$pdfFinal->useTemplate($tppl, 0, 0, 210);
+			$pdfFinal->setSourceFile( $pdfPhotoAvantLink );
+			$tppl = $pdfFinal->importPage( 2 );
+			$pdfFinal->useTemplate( $tppl, 0, 0, 210 );
 		}
 
-		$pdfFinalString = $pdfFinal->Output('','S');
-		$handle = fopen($dirname.$nameContract, 'w') or die('Cannot open file:  '.$nameContract); //implicitly creates file
-		fwrite($handle,$pdfFinalString);
-		fclose($handle);
-		$this->setUrlContractPDF($UrlToContract."/".$this->getFkIdCommande()."/".$nameContract);
+		$pdfFinalString = $pdfFinal->Output( '', 'S' );
+		$handle = fopen( $dirname . $nameContract, 'w' ) or die( 'Cannot open file:  ' . $nameContract ); //implicitly creates file
+		fwrite( $handle, $pdfFinalString );
+		fclose( $handle );
+		$this->setUrlContractPDF( $UrlToContract . "/" . $this->getFkIdCommande() . "/" . $nameContract );
 
 	}
 
@@ -807,13 +808,14 @@ class Contract {
 	}
 
 	public function getCarBrokenText() {
-		if(isset($this->carBroken) && !empty($this->carBroken)){
-			if($this->carBroken == 1){
+		if ( isset( $this->carBroken ) && ! empty( $this->carBroken ) ) {
+			if ( $this->carBroken == 1 ) {
 				return "Oui";
-			}else{
+			} else {
 				return "Non";
 			}
 		}
+
 		return "";
 	}
 
@@ -839,13 +841,14 @@ class Contract {
 	}
 
 
+	public function getDistance() {
+		$result = intval( $this->getKmFinal() ) - intval( $this->getKilVoiture() );
+		if ( $result > 0 ) {
+			return $result;
+		}
 
-	public function getDistance(){
-		$result = intval($this->getKmFinal()) - intval($this->getKilVoiture());
-		if($result > 0) return $result;
 		return "";
 	}
-
 
 
 }
