@@ -114,7 +114,7 @@ class Contract {
 		$this->setFkIdUser( $result[0]->fkUser );
 		$this->setCreateDate( $result[0]->createDate );
 		$this->setUpdate( $result[0]->updateDate );
-		$this->setJsonToThis( $result->data );
+		$this->setJsonToThis( $result[0]->data );
 
 		return $this;
 	}
@@ -126,7 +126,7 @@ class Contract {
 
 		$result = $wpdb->get_results( "SELECT * FROM " . $wpdb->prefix . "wcc_contracts " . $filter . " LIMIT 2 ", OBJECT );
 
-		if ( $result[0] == null || sizeof( $result ) == 0 ) {
+		if ( $result == null || sizeof( $result ) == 0 ) {
 			return null;
 		}
 
@@ -168,7 +168,9 @@ class Contract {
 		$this->setDateFinal( strip_tags( $array['dateFinal'] ) );
 		$this->setCarBroken( strip_tags( $array['carBroken'] ) );
 		$this->setComment( strip_tags( $array['comment'] ) );
-		$this->setUrlContractPDF( strip_tags( $array['pdfLink'] ) );
+		if(isset($array['pdfLink'])) {
+			$this->setUrlContractPDF( strip_tags( $array['pdfLink'] ) );
+		}
 		$this->setStatus( strip_tags( $array['status'] ) );
 	}
 

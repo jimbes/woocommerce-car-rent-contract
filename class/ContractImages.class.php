@@ -80,7 +80,7 @@ class ContractImages {
 		$result = $wpdb->get_results( "SELECT * FROM " . $wpdb->prefix . "wcc_contracts_image " . $filter . " ORDER BY typeImage", OBJECT );
 
 		//$wpdb->show_errors();
-		if ( $result[0] == null || sizeof( $result ) == 0 ) {
+		if ( $result == null || sizeof( $result ) == 0 ) {
 			return null;
 		}
 		$array = array();

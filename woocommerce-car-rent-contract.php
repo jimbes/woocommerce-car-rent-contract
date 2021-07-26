@@ -11,6 +11,7 @@
 require_once plugin_dir_path(__FILE__) . '/class/pluginManagement.class.php';
 require_once plugin_dir_path(__FILE__) . '/class/Contract.class.php';
 require_once plugin_dir_path(__FILE__) . '/class/ContractImages.class.php';
+require_once plugin_dir_path(__FILE__) . '/class/Docage.class.php';
 
 require_once plugin_dir_path(__FILE__) . '/admin/listContractAdmin.php';
 require_once plugin_dir_path(__FILE__) . '/admin/detailContractAdmin.php';

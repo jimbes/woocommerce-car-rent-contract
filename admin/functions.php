@@ -41,7 +41,7 @@ function addContract(){
 			}
 			$contract->generatePDF();
 		}
-	}else{
+	}elseif($contract->getStatus() == 2){
 		$contract->setId($_POST["idContract"]);
 		$contract->generatePDF();
 		$contract->setStatus(3);
@@ -64,6 +64,15 @@ function addContract(){
 			$contract->generatePDF();
 		}
 		update_field( 'kilometrage_reel',  intval($contract->getKmFinal()) , 'post_'.$_POST["carID"]);
+	}elseif($contract->getStatus() == 3){
+
+		$contract->getContractByID($_POST["idContract"]);
+
+		// request signature
+		$signature = new Docage();
+		$signature->createSignature();
+		exit;
+
 	}
 
 

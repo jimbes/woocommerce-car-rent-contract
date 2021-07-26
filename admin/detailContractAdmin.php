@@ -52,6 +52,13 @@ function detailContractAdminFunction() {
 			"price"           => strip_tags( $order->get_formatted_order_total() ),
 			"insurance"       => $assurance,
 			"kilVoiture"      => get_field( 'kilometrage_reel', 'post_' . $car->get_id() ),
+            "kmFinal"         => "",
+            "fuelFinal"       => "",
+            "dateFinal"       => "",
+            "carBroken"       => false,
+            "comment"         => "",
+            "pdfLink"         => "",
+			"status"          => 1
 		);
 		$contract->setArrayToThis( $array );
 	} else {
@@ -268,13 +275,18 @@ function detailContractAdminFunction() {
 									echo "<td><img width=150 src='/wp-content/plugins/woocommerce-car-rent-contract/" . $tempObject->getUrl() . "'/></td>";
 								}
 
-								if ( $tempObject2 == null ) {
-									echo "<td><input type='texte' class='photoElem' name='title-photo2-".$i."'></td>";
-									echo "<td><input type='file' class='photoElem' name='photo2-".$i."'></td>";
-								} else {
-									echo "<td>" . $tempObject2->getTitleImage() . "</td>";
-									echo "<td><img width=150 src='/wp-content/plugins/woocommerce-car-rent-contract/" . $tempObject2->getUrl() . "'/></td>";
-								}
+								if ( $contract->getStatus() > 1) {
+									if ( $tempObject2 == null ) {
+										echo "<td><input type='texte' class='photoElem' name='title-photo2-" . $i . "'></td>";
+										echo "<td><input type='file' class='photoElem' name='photo2-" . $i . "'></td>";
+									} else {
+										echo "<td>" . $tempObject2->getTitleImage() . "</td>";
+										echo "<td><img width=150 src='/wp-content/plugins/woocommerce-car-rent-contract/" . $tempObject2->getUrl() . "'/></td>";
+									}
+								}else{
+									echo "<td></td>";
+									echo "<td></td>";
+                                }
 
 								?>
                             </tr>
@@ -331,11 +343,14 @@ function detailContractAdminFunction() {
 			<?php
 			if ( ! empty( $contract->getUrlContractPDF() ) ) {
 				?>
-                <a href="<?php echo $contract->getUrlContractPDF() ?>">Ouvrir le PDF</a>
+
 				<?php if ( $contract->getStatus() != 3 ) { ?>
-                    <a href="javascript:callSubmit('<?php echo admin_url( 'admin-post.php' ) ?>','contract')">Clore le
-                        contrat et générer le PDF</a>
-				<?php } ?>
+                    <a href="javascript:callSubmit('<?php echo admin_url( 'admin-post.php' ) ?>','contract')">Générer le PDF Final avant Signature</a>
+				<?php }else{ ?>
+                    <a href="<?php echo $contract->getUrlContractPDF() ?>">Ouvrir le PDF</a>
+                    <a href="javascript:callSubmit('<?php echo admin_url( 'admin-post.php' ) ?>','contract')">Executer la signature electronique</a>
+				    <?php
+                } ?>
 			<?php } else { ?>
                 <a href="javascript:callSubmit('<?php echo admin_url( 'admin-post.php' ) ?>','contract')">Generer le
                     PDF</a>
