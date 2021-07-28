@@ -318,10 +318,10 @@ class Contract {
 
 		$pathToContract = dirname( dirname( __FILE__ ) ) . "/contracts";
 		$UrlToContract  = plugin_dir_url( dirname( __FILE__ ) ) . "contracts";
-		$namePage1      = "Page1-contract de loction n°" . $this->getFkIdCommande() . ".pdf";
-		$namePagePhoto  = "PhotoAvant-contract de loction n°" . $this->getFkIdCommande() . ".pdf";
-		$namePagePhotoApres  = "PhotoApres-contract de loction n°" . $this->getFkIdCommande() . ".pdf";
-		$nameContract   = "contract de loction n°" . $this->getFkIdCommande() . ".pdf";
+		$namePage1      = "Page1-contract de location n°" . $this->getFkIdCommande() . ".pdf";
+		$namePagePhoto  = "PhotoAvant-contract de location n°" . $this->getFkIdCommande() . ".pdf";
+		$namePagePhotoApres  = "PhotoApres-contract de location n°" . $this->getFkIdCommande() . ".pdf";
+		$nameContract   = "contract de location n°" . $this->getFkIdCommande() . ".pdf";
 
 		$pdfContract = $pdfInit->Output( '', "S" );
 

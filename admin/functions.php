@@ -68,10 +68,49 @@ function addContract(){
 
 		$contract->getContractByID($_POST["idContract"]);
 
+
+		$user = get_user_by("id",$contract->getFkIdUser());
+
+
+		$order = wc_get_order( $contract->getFkIdCommande() );
+		$orderArray  = $order->get_data();
+
+		$path = parse_url($contract->getUrlContractPDF(), PHP_URL_PATH);
+		$doc = pathinfo($_SERVER['DOCUMENT_ROOT'] . $path);
+
+
+		$contratArray = array(
+							"ID"=>$contract->getId(),
+							"Name"=>$doc["filename"]
+		);
+
+		$userArray = array(
+							"email"=>$user->user_email,
+							"FName"=>$user->first_name,
+							"LName"=>$user->last_name,
+							"Address1"=>$orderArray['billing']['address_1'],
+							"Address2"=>$orderArray['billing']['address_2'],
+							"City"=>$orderArray['billing']['city'],
+							"State"=>$orderArray['billing']['state'],
+							"Zip"=>$orderArray['billing']['postcode'],
+							"Pays"=>$orderArray['billing']['country'],
+							"Notes"=>"",
+							"Phone"=>$orderArray['billing']['phone'],
+							"Mobile"=>$orderArray['billing']['phone'],
+							"Company"=>"",
+			);
+
+
+		$documentArray = array(
+			"FriendlyName" => $doc["filename"],
+			"fileName" => $doc["basename"],
+			"linkAbsolute" => $doc["dirname"]."/".$doc["basename"],
+
+		);
+
 		// request signature
 		$signature = new Docage();
-		$signature->createSignature();
-		exit;
+		$signature->createSignature($contratArray,$userArray,$documentArray);
 
 	}
 

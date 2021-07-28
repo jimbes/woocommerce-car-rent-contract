@@ -11,22 +11,30 @@ class Docage {
 	private $username;
 	private $apiKey;
 
+	private $isTest;
+
+
 	/**
 	 * Docage constructor.
 	 */
 	public function __construct() {
 		$this->setMainUrl( "https://api.docage.com" );
+		$this->isTest = "true";
 		$this->request = curl_init();
-		$this->setUsername( "test" );
-		$this->setApiKey( "test" );
+		$this->setUsername( "contact@djomanlocation.com" );
+		$this->setApiKey( "19c26d56-bfe3-45e0-8265-7d1649700cd3" );
 
 		$this->connectAPI();
 		$this->standartHeader();
+
+
 	}
 
 	private function connectAPI() {
-		curl_setopt( $this->request, CURLOPT_HTTPAUTH, CURLAUTH_ANY );
-		curl_setopt( $this->request, CURLOPT_USERPWD, '"' . $this->getUsername() . ':' . $this->getApiKey() . '"' );
+		curl_setopt( $this->request, CURLOPT_HTTPHEADER, array(
+			"Authorization: Basic " . base64_encode($this->getUsername() . ":" . $this->getApiKey()),
+			"Content-Type: multipart/form-data")
+		);
 	}
 
 
@@ -40,50 +48,50 @@ class Docage {
 	}
 
 
-	public function createSignature() {
+
+	public function createSignature($contract,$user,$doc) {
 		curl_setopt( $this->request, CURLOPT_URL, $this->getMainUrl() . '/Transactions/CreateFullTransaction' );
 		curl_setopt( $this->request, CURLOPT_CUSTOMREQUEST, 'POST' );
 
 
 		$TransactionArray = array(
-				"Name"                  => "Transaction test from API",
-				"IsTest"                => "true",
-				"TransactionFiles"      => array(array("FileName" => "document.pdf", "FriendlyName" => "Document1")),
-				"TransactionMembers"    => array(array("FriendlyName" => "Client"))
+				"Name"                  => $contract["Name"],
+				"IsTest"                => $this->isTest,
+				"TransactionFiles"      => array(array("FileName" => $doc["fileName"], "FriendlyName" => $doc["FriendlyName"])),
+				"TransactionMembers"    => array(array("FriendlyName" => "Client_".$contract["ID"]))
 			);
 
 		$clientInformation  = array(
-				"Email"                 => "user@example.com",
-				"FirstName"             => "Steven",
-				"LastName"              => "HAWKINS",
-				"Address1"              => "42 rue de l\'espace",
-				"Address2"              => "",
-				"City"                  => "PARIS",
-				"State"                 => "",
-				"ZipCode"               => "75000",
-				"Country"               => "FRANCE",
-				"Notes"                 => "",
-				"Phone"                 => "+33XXXXXXXXX",
-				"Mobile"                => "+33XXXXXXXXX",
-				"Company"               => "Docage"
+				"Email"                 => $user["email"],
+				"FirstName"             => $user["FName"],
+				"LastName"              => $user["LName"],
+				"Address1"              => $user["Address1"],
+				"Address2"              => $user["Address2"],
+				"City"                  => $user["City"],
+				"State"                 => $user["State"],
+				"ZipCode"               => $user["Zip"],
+				"Country"               => $user["Pays"],
+				"Notes"                 => $user["Notes"],
+				"Phone"                 => $user["Phone"],
+				"Mobile"                => $user["Mobile"],
+				"Company"               => $user["Company"]
 		);
 
 		$postFields = array(
 			'Transaction' => json_encode($TransactionArray),
-			'Client' => json_encode($clientInformation),
-			'Document1' => new CURLFILE( 'C:\wamp64\www\Djomanlocation\wp-content\plugins\woocommerce-car-rent-contract\contracts\3975\contract de loction n°3975.pdf' ),
-			'Client, Document1' => '{ "Pages": "1", "Coordinates": "0, 0, 150, 220" }'
+			'Client_'.$contract["ID"] => json_encode($clientInformation),
+			$doc["FriendlyName"] => new CURLFILE( $doc["linkAbsolute"] ),
+			'Client_'.$contract["ID"].', '.$doc["FriendlyName"] => '{ "Pages": "1", "Coordinates": "0, 0, 150, 220" }'
 		);
+
 
 		curl_setopt( $this->request, CURLOPT_POSTFIELDS , $postFields );
 		$response = curl_exec($this->request);
-		var_dump(curl_getinfo($this->request));
 		if (curl_errno($this->request)) {
 			$error_msg = curl_error($this->request);
 			echo $error_msg;
 		}
 		curl_close($this->request);
-		echo "</br></br>Success :". $response;
 
 	}
 
