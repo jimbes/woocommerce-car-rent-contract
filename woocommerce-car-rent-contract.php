@@ -3,7 +3,7 @@
  * Plugin Name: Woocommerce Car rent Contract
  * Plugin URI: http://www.jimmy-besse.fr/woocommerce-car-rent-contract
  * Description: Ability to create contract from Woocommerce Order.
- * Version: 1.5
+ * Version: 1.6
  * Author: Jimmy Besse
  * Author URI: http://www.jimmy-besse.fr
  */
