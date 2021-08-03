@@ -6,6 +6,7 @@ function detailContractAdminFunction() {
 	$customer = get_user_by( 'id', $order->get_user_id() );
 
 
+
 	$car            = null;
 	$rent_startDate = "";
 	$rent_endDate   = "";
@@ -36,6 +37,7 @@ function detailContractAdminFunction() {
 		$array = array(
 			"lName"           => $customer->user_lastname,
 			"fName"           => $customer->user_firstname,
+			"phone"           => $order->billing_phone,
 			"dob"             => get_field( 'date_de_naissance', 'user_' . $customer->ID ),
 			"nPermis"         => get_field( 'numero_du_permis_de_conduire', 'user_' . $customer->ID ),
 			"permisDate"      => get_field( 'date_dobtention_du_permis_b', 'user_' . $customer->ID ),
@@ -103,6 +105,11 @@ function detailContractAdminFunction() {
                         <td>Prénom</td>
                         <td><?php echo $contract->getFname() ?></td>
                         <td><input type="hidden" name="fName" value="<?php echo $contract->getFname() ?>"/></td>
+                    </tr>
+                    <tr class="phone text">
+                        <td>Téléphone</td>
+                        <td><?php echo $contract->getPhone() ?></td>
+                        <td><input type="hidden" name="phone" value="<?php echo $contract->getPhone() ?>"/></td>
                     </tr>
                     <tr class="dob date">
                         <td>Né.e le</td>

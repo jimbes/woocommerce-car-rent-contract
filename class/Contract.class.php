@@ -21,6 +21,7 @@ class Contract {
 	// User
 	private $fname;
 	private $lname;
+	private $phone;
 	private $dob;
 	private $driverlicense;
 	private $driverdate;
@@ -147,6 +148,7 @@ class Contract {
 	public function setArrayToThis( $array ) {
 		$this->setLname( strip_tags( $array['lName'] ) );
 		$this->setFname( strip_tags( $array['fName'] ) );
+		$this->setPhone( strip_tags( $array['phone'] ) );
 		$this->setDob( strip_tags( $array['dob'] ) );
 		$this->setDriverlicense( strip_tags( $array['nPermis'] ) );
 		$this->setDriverdate( strip_tags( $array['permisDate'] ) );
@@ -179,6 +181,7 @@ class Contract {
 		$array = array(
 			"lName"           => $this->getLname(),
 			"fName"           => $this->getFname(),
+			"phone"           => $this->getPhone(),
 			"dob"             => $this->getDob(),
 			"nPermis"         => $this->getDriverlicense(),
 			"permisDate"      => $this->getDriverdate(),
@@ -918,6 +921,20 @@ class Contract {
 		}
 
 		return "";
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getPhone() {
+		return $this->phone;
+	}
+
+	/**
+	 * @param mixed $phone
+	 */
+	public function setPhone( $phone ): void {
+		$this->phone = $phone;
 	}
 
 
